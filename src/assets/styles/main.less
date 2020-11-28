@@ -1,0 +1,19 @@
+select {
+  cursor: pointer;
+}
+.add-new-item {
+  --size: 1em;
+  padding: 0 calc(var(--size) / 4);
+  color: black;
+  font-size: var(--size);
+  line-height: 1;
+  background-color: white;
+  border: 1px solid grey;
+  border-radius: 3px;
+  box-shadow: none;
+  outline: none;
+  &:hover {
+    color: green;
+    border-color: green;
+  }
+}

@@ -99,10 +99,10 @@
     <button
       v-if="!toAddItem"
       type="button"
-      class="block add-key"
+      class="add-new-item"
       @click="addItem"
     >
-      <i class="v-json-edit-icon-add"></i>
+      +
     </button>
   </div>
 </template>
