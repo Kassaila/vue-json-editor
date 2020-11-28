@@ -92,23 +92,32 @@
       </div>
     </draggable>
 
-    <item-add-form
+    <new-item-form
       v-if="toAddItem"
-      @confirm="newItem"
-      @cancel="cancelNewItem"
-    ></item-add-form>
+      @add-new-item="newItem"
+      @cancel-new-item="cancelNewItem"
+    ></new-item-form>
 
-    <div class="block add-key" @click="addItem" v-if="!toAddItem">
+    <button
+      v-if="!toAddItem"
+      type="button"
+      class="block add-key"
+      @click="addItem"
+    >
       <i class="v-json-edit-icon-add"></i>
-    </div>
+    </button>
   </div>
 </template>
 
 <script>
-import ItemAddForm from "./ItemAddForm.vue";
+import NewItemForm from "./new-item-form.vue";
 
 export default {
   name: "JsonView",
+  components: {
+    "new-item-form": NewItemForm,
+    "array-view": () => import("./ArrayView.vue"),
+  },
   props: { parsedData: {} },
   data() {
     return {
@@ -127,10 +136,6 @@ export default {
         this.flowData = this.parsedData;
       },
     },
-  },
-  components: {
-    "item-add-form": ItemAddForm,
-    "array-view": () => import("./ArrayView.vue"),
   },
   methods: {
     delItem(parentDom, item, index) {
@@ -161,11 +166,11 @@ export default {
         type: obj.type,
       };
       if (obj.type == "array" || obj.type == "object") {
-        oj.childParams = obj.val;
+        oj.childParams = obj.value;
         oj.remark = null;
       } else {
         oj.childParams = null;
-        oj.remark = obj.val;
+        oj.remark = obj.value;
       }
 
       if (!oj.name) {
