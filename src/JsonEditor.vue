@@ -1,7 +1,5 @@
 <template>
-  <json-view 
-    :parsedData="parsedData" 
-    v-model="parsedData"></json-view>
+  <json-view :parsedData="parsedData" v-model="parsedData"></json-view>
 </template>
 
 <script>
@@ -13,30 +11,30 @@ export default {
   props: {
     objData: {
       type: [Object, Array],
-      required: true 
+      required: true,
     },
     options: {
       type: Object,
       default: function () {
-        return { 
+        return {
           confirmText: "confirm",
-          cancelText: "cancel"
-        }
+          cancelText: "cancel",
+        };
       },
-    }
+    },
   },
-  provide () {
+  provide() {
     return {
-      formBtnText: this.options
-    }
-  },
-  data () {
-    return {
-      parsedData: [],
-      wrapperType: 'object'
+      formBtnText: this.options,
     };
   },
-  created () {
+  data() {
+    return {
+      parsedData: [],
+      wrapperType: "object",
+    };
+  },
+  created() {
     this.lastParsedData = {};
     this.parsedData = this.jsonParse(this.objData);
   },
@@ -44,28 +42,27 @@ export default {
     objData: {
       handler(newValue, oldValue) {
         this.parsedData = this.jsonParse(this.objData);
-      }
+      },
     },
     parsedData: {
       handler(newValue, oldValue) {
-        
         if (JSON.stringify(newValue) === JSON.stringify(this.lastParsedData)) {
           return;
         }
 
         this.lastParsedData = cloneDeep(newValue);
-        
+
         this.$emit("input", this.makeJson(this.parsedData));
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   components: {
-    "json-view": JsonView
+    "json-view": JsonView,
   },
   methods: {
     jsonParse: function (jsonStr) {
-      const parseJson = json => {
+      const parseJson = (json) => {
         let result = [];
         let keys = Object.keys(json);
         keys.forEach((k, index) => {
@@ -74,14 +71,13 @@ export default {
 
           if (this.getType(val) == "object") {
             parsedVal = parseJson(val);
-
           } else if (this.getType(val) == "array") {
             parsedVal = parseArray(val);
           }
 
           let opt = {
             name: k,
-            type: this.getType(val)
+            type: this.getType(val),
           };
 
           if (opt.type == "array" || opt.type == "object") {
@@ -98,21 +94,20 @@ export default {
       };
 
       //
-      const parseArray = arrayObj => {
+      const parseArray = (arrayObj) => {
         let result = [];
         for (let i = 0; i < arrayObj.length; ++i) {
           let val = arrayObj[i];
           let parsedVal = val;
           if (this.getType(val) == "object") {
             parsedVal = parseJson(val);
-
           } else if (this.getType(val) == "array") {
             parsedVal = parseArray(val);
           }
 
           let opt = {
             name: null,
-            type: this.getType(val)
+            type: this.getType(val),
           };
 
           if (opt.type == "array" || opt.type == "object") {
@@ -129,15 +124,15 @@ export default {
       };
 
       // --
-      const parseBody = data => {
+      const parseBody = (data) => {
         let r = null;
-        switch(this.getType(data)) {
-          case 'array':
-            this.wrapperType = 'array';
+        switch (this.getType(data)) {
+          case "array":
+            this.wrapperType = "array";
             r = parseArray(data);
             break;
-          case 'object':
-            this.wrapperType = 'object';
+          case "object":
+            this.wrapperType = "object";
             r = parseJson(data);
             break;
         }
@@ -158,7 +153,7 @@ export default {
         case "[object Null]":
         case "[object Function]":
         case "[object Undefined]":
-          return "string"
+          return "string";
           break;
         default:
           return typeof obj;
@@ -167,7 +162,7 @@ export default {
     },
 
     makeJson: function (dataArr) {
-      const revertWithObj = data => {
+      const revertWithObj = (data) => {
         let r = {};
         for (let i = 0; i < data.length; ++i) {
           let el = data[i];
@@ -186,7 +181,7 @@ export default {
         return r;
       };
 
-      const revertWithArray = data => {
+      const revertWithArray = (data) => {
         let arr = [];
         for (let i = 0; i < data.length; ++i) {
           let el = data[i];
@@ -204,14 +199,13 @@ export default {
         return arr;
       };
 
-      const revertMain = data => {
+      const revertMain = (data) => {
         let r = null;
-        switch(this.wrapperType) {
-          case 'array':
-            
+        switch (this.wrapperType) {
+          case "array":
             r = revertWithArray(data);
             break;
-          case 'object':
+          case "object":
             r = revertWithObj(data);
             break;
         }
@@ -219,8 +213,8 @@ export default {
       };
 
       return revertMain(dataArr);
-    }
-  }
+    },
+  },
 };
 </script>
 

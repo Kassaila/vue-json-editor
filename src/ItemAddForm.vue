@@ -1,32 +1,30 @@
 <template>
   <div class="add-form pure-form">
     <div class="f-input">
-      <input 
-        type="text" 
+      <input
+        type="text"
         v-model="keyName"
         v-if="needName"
-        class="f-input-m" 
-        placeholder="name">
+        class="f-input-m"
+        placeholder="name"
+      />
       <select v-model="formatSelected" class="f-input-m">
-        <option 
-          v-for="(item, index) in formats"
-          :value="item"
-          :key="index">
-          {{item}}
+        <option v-for="(item, index) in formats" :value="item" :key="index">
+          {{ item }}
         </option>
       </select>
       <span class="f-input-m">
         <b>:</b>
       </span>
 
-      <template v-if="formatSelected !='array' && formatSelected != 'object'">
+      <template v-if="formatSelected != 'array' && formatSelected != 'object'">
         <input
           type="text"
           v-model="valName"
           class="f-input-m"
           placeholder="value"
           v-if="formatSelected == 'string'"
-        >
+        />
         <input
           type="number"
           v-model="valName"
@@ -34,7 +32,7 @@
           placeholder="value"
           v-if="formatSelected == 'number'"
           @change="dealNumber"
-        >
+        />
         <select
           name="value"
           v-model="valName"
@@ -49,14 +47,10 @@
     </div>
 
     <div class="f-btns">
-      <button 
-        class="pure-button f-confirm" 
-        @click="confirm">
+      <button class="pure-button f-confirm" @click="confirm">
         {{ this.formBtnText.confirmText }}
       </button>
-      <button 
-        class="pure-button"
-        @click="cancel">
+      <button class="pure-button" @click="cancel">
         {{ this.formBtnText.cancelText }}
       </button>
     </div>
@@ -65,26 +59,26 @@
 
 <script>
 export default {
-  name: 'ItemAddForm',
-  data () {
+  name: "ItemAddForm",
+  data() {
     return {
-      formats: ['string', 'array', 'object', 'number', 'boolean'],
-      formatSelected: 'string',
+      formats: ["string", "array", "object", "number", "boolean"],
+      formatSelected: "string",
       //--
-      keyName: '',
-      valName: ''
+      keyName: "",
+      valName: "",
     };
   },
   props: {
     needName: {
-      default: true
-    }
+      default: true,
+    },
   },
-  inject: ['formBtnText'],
+  inject: ["formBtnText"],
   methods: {
-    confirm: function() {
+    confirm: function () {
       let val = null;
-      if (this.formatSelected === 'array' || this.formatSelected === 'object') {
+      if (this.formatSelected === "array" || this.formatSelected === "object") {
         val = [];
       } else {
         val = this.valName;
@@ -93,27 +87,27 @@ export default {
       let objData = {
         key: this.needName ? this.keyName : null,
         val: val,
-        type: this.formatSelected
+        type: this.formatSelected,
       };
 
-      this.$emit('confirm', objData);
-      this.keyName = '';
-      this.valName = '';
-      this.formatSelected = 'string';
+      this.$emit("confirm", objData);
+      this.keyName = "";
+      this.valName = "";
+      this.formatSelected = "string";
     },
 
-    cancel: function() {
-      this.$emit('cancel');
+    cancel: function () {
+      this.$emit("cancel");
     },
 
-    dealBoolean: function() {
+    dealBoolean: function () {
       this.valName = Boolean(this.valName);
     },
 
-    dealNumber: function() {
+    dealNumber: function () {
       this.valName = Number(this.valName);
-    }
-  }
+    },
+  },
 };
 </script>
 
