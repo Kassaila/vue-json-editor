@@ -4,7 +4,11 @@
       <div
         v-for="(item, index) in flowData"
         :key="`${item.type}${index}`"
-        :class="['block', 'clearfix', {'hide-block': hideMyBlock[index] == true}]"
+        :class="[
+          'block',
+          'clearfix',
+          { 'hide-block': hideMyBlock[index] == true },
+        ]"
       >
         <span class="json-key">
           <input
@@ -19,16 +23,26 @@
             v-if="item.type == 'object' || item.type == 'array'"
             @click="closeBlock(index, $event)"
           ></i>
-          <i v-if="item.type == 'object'" class="i-type">{{'{' + item.childParams.length + '}'}}</i>
-          <i v-if="item.type == 'array'" class="i-type">{{'[' + item.childParams.length + ']'}}</i>
+          <i v-if="item.type == 'object'" class="i-type">{{
+            "{" + item.childParams.length + "}"
+          }}</i>
+          <i v-if="item.type == 'array'" class="i-type">{{
+            "[" + item.childParams.length + "]"
+          }}</i>
         </span>
         <span class="json-val">
           <template v-if="item.type == 'object'">
-            <json-view :parsedData="item.childParams" v-model="item.childParams"></json-view>
+            <json-view
+              :parsedData="item.childParams"
+              v-model="item.childParams"
+            ></json-view>
           </template>
 
           <template v-else-if="item.type == 'array'">
-            <array-view :parsedData="item.childParams" v-model="item.childParams"></array-view>
+            <array-view
+              :parsedData="item.childParams"
+              v-model="item.childParams"
+            ></array-view>
           </template>
 
           <template v-else>
@@ -60,8 +74,14 @@
         </span>
 
         <div class="tools">
-          <select v-model="item.type" class="tools-types" @change="itemTypeChange(item)">
-            <option v-for="(type, index) in formats" :value="type" :key="index">{{type}}</option>
+          <select
+            v-model="item.type"
+            class="tools-types"
+            @change="itemTypeChange(item)"
+          >
+            <option v-for="(type, index) in formats" :value="type" :key="index">
+              {{ type }}
+            </option>
           </select>
           <i class="dragbar v-json-edit-icon-drag"></i>
           <i class="del-btn" @click="delItem(parsedData, item, index)">
@@ -71,7 +91,11 @@
       </div>
     </draggable>
 
-    <item-add-form v-if="toAddItem" @confirm="newItem" @cancel="cancelNewItem"></item-add-form>
+    <item-add-form
+      v-if="toAddItem"
+      @confirm="newItem"
+      @cancel="cancelNewItem"
+    ></item-add-form>
 
     <div class="block add-key" @click="addItem" v-if="!toAddItem">
       <i class="v-json-edit-icon-add"></i>
@@ -90,7 +114,7 @@ export default {
       formats: ["string", "array", "object", "number", "boolean"],
       flowData: this.parsedData,
       toAddItem: false,
-      hideMyBlock: {}
+      hideMyBlock: {},
     };
   },
   created() {
@@ -100,21 +124,21 @@ export default {
     parsedData: {
       handler(newValue, oldValue) {
         this.flowData = this.parsedData;
-      }
-    }
+      },
+    },
   },
   components: {
     "item-add-form": ItemAddForm,
-    "array-view": () => import("./ArrayView.vue")
+    "array-view": () => import("./ArrayView.vue"),
   },
   methods: {
-    delItem: function(parentDom, item, index) {
+    delItem: function (parentDom, item, index) {
       this.flowData.splice(index, 1);
       if (this.hideMyBlock[index]) this.hideMyBlock[index] = false;
       this.$emit("input", this.flowData);
     },
 
-    closeBlock: function(index, e) {
+    closeBlock: function (index, e) {
       this.$set(
         this.hideMyBlock,
         index,
@@ -122,18 +146,18 @@ export default {
       );
     },
 
-    addItem: function() {
+    addItem: function () {
       this.toAddItem = true;
     },
 
-    cancelNewItem: function() {
+    cancelNewItem: function () {
       this.toAddItem = false;
     },
 
-    newItem: function(obj) {
+    newItem: function (obj) {
       let oj = {
         name: obj.key,
-        type: obj.type
+        type: obj.type,
       };
       if (obj.type == "array" || obj.type == "object") {
         oj.childParams = obj.val;
@@ -153,7 +177,7 @@ export default {
       }
     },
 
-    keyInputBlur: function(item, e) {
+    keyInputBlur: function (item, e) {
       if (item.name.length <= 0) {
         alert("please must input a name!");
         item.name = "null";
@@ -161,11 +185,11 @@ export default {
       }
     },
 
-    onDragEnd: function() {
+    onDragEnd: function () {
       this.$emit("input", this.flowData);
     },
 
-    itemTypeChange: function(item) {
+    itemTypeChange: function (item) {
       if (item.type === "array" || item.type === "object") {
         item.childParams = [];
         item.remark = null;
@@ -181,9 +205,9 @@ export default {
       }
     },
 
-    numberInputChange: function(item) {
+    numberInputChange: function (item) {
       if (!item.remark) item.remark = 0;
-    }
-  }
+    },
+  },
 };
 </script>
