@@ -1,9 +1,9 @@
 <template>
-  <json-view :parsedData="parsedData" v-model="parsedData"></json-view>
+  <object-view :parsedData="parsedData" v-model="parsedData"></object-view>
 </template>
 
 <script>
-import JsonView from "./JsonView.vue";
+import ObjectView from "./object-view.vue";
 import cloneDeep from "lodash.clonedeep";
 
 export default {
@@ -58,7 +58,7 @@ export default {
     },
   },
   components: {
-    "json-view": JsonView,
+    "object-view": ObjectView,
   },
   methods: {
     jsonParse: function (jsonStr) {

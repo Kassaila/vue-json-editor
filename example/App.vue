@@ -4,13 +4,13 @@
 		<div class="editor-w clearfix">
 			<div class="w-2">
 				<div class="editor">
-					<JsonEditor
+					<json-editor
 						:options="{
 							confirmText: 'confirm',
 							cancelText: 'cancel',
 						}"
 						:objData="jsonData" 
-						v-model="jsonData" ></JsonEditor>
+						v-model="jsonData" ></json-editor>
 				</div>
 			</div>
 			<div class="w-2">

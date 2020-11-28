@@ -33,10 +33,10 @@
         </span>
         <span class="json-val">
           <template v-if="item.type == 'object'">
-            <json-view
+            <object-view
               :parsedData="item.childParams"
               v-model="item.childParams"
-            ></json-view>
+            ></object-view>
           </template>
 
           <template v-else-if="item.type == 'array'">
@@ -113,10 +113,10 @@
 import NewItemForm from "./new-item-form.vue";
 
 export default {
-  name: "JsonView",
+  name: "ObjectView",
   components: {
     "new-item-form": NewItemForm,
-    "array-view": () => import("./ArrayView.vue"),
+    "array-view": () => import("./array-view.vue"),
   },
   props: { parsedData: {} },
   data() {

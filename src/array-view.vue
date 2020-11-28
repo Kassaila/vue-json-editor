@@ -58,10 +58,10 @@
               </template>
 
               <template v-if="member.type == 'object'">
-                <json-view
+                <object-view
                   :parsedData="member.childParams || {}"
                   v-model="member.childParams"
-                ></json-view>
+                ></object-view>
               </template>
             </span>
           </div>
@@ -114,7 +114,7 @@ export default {
   name: "ArrayView",
   components: {
     "new-item-form": NewItemForm,
-    "json-view": () => import("./JsonView.vue"),
+    "object-view": () => import("./object-view.vue"),
   },
   props: ["parsedData"],
   data: function () {
