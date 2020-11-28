@@ -12,10 +12,11 @@
       >
         <span class="json-key">
           <input
-            type="text"
-            v-model="item.name"
-            class="key-input"
             v-if="typeof item.name == 'string'"
+            v-model="item.name"
+            type="text"
+            placeholder="cannot be empty"
+            class="key-input"
             @blur="keyInputBlur(item, $event)"
           />
           <i
@@ -132,13 +133,13 @@ export default {
     "array-view": () => import("./ArrayView.vue"),
   },
   methods: {
-    delItem: function (parentDom, item, index) {
+    delItem(parentDom, item, index) {
       this.flowData.splice(index, 1);
       if (this.hideMyBlock[index]) this.hideMyBlock[index] = false;
       this.$emit("input", this.flowData);
     },
 
-    closeBlock: function (index, e) {
+    closeBlock(index, e) {
       this.$set(
         this.hideMyBlock,
         index,
@@ -146,15 +147,15 @@ export default {
       );
     },
 
-    addItem: function () {
+    addItem() {
       this.toAddItem = true;
     },
 
-    cancelNewItem: function () {
+    cancelNewItem() {
       this.toAddItem = false;
     },
 
-    newItem: function (obj) {
+    newItem(obj) {
       let oj = {
         name: obj.key,
         type: obj.type,
@@ -177,19 +178,17 @@ export default {
       }
     },
 
-    keyInputBlur: function (item, e) {
+    keyInputBlur(item, e) {
       if (item.name.length <= 0) {
-        alert("please must input a name!");
-        item.name = "null";
         e.target.focus();
       }
     },
 
-    onDragEnd: function () {
+    onDragEnd() {
       this.$emit("input", this.flowData);
     },
 
-    itemTypeChange: function (item) {
+    itemTypeChange(item) {
       if (item.type === "array" || item.type === "object") {
         item.childParams = [];
         item.remark = null;
@@ -205,8 +204,12 @@ export default {
       }
     },
 
-    numberInputChange: function (item) {
-      if (!item.remark) item.remark = 0;
+    numberInputChange(item) {
+      if (item.remark !== "") {
+        item.remark = item.remark ?? 0;
+      } else {
+        item.remark = 0;
+      }
     },
   },
 };
