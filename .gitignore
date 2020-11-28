@@ -1,0 +1,34 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# editor
+/nbproject/private/
+/nbproject/
+.project
+npm-debug.log
+.idea
+.history
+.vscode
+
+# Ignore Mac DS_Store files
+.DS_Store
+._*
+.com.apple.timemachine.supported
+
+# linux backup files
+*~
+
+# markup
+/build/
+/assets/
+/production/
+/.temp/
+.sass-cache
+.tmp
+tmp
+
+#npm dependencies
+/node_modules/
+package-lock.json
+
+#debug files
+*.log
