@@ -1,8 +1,8 @@
 <template>
   <div class="block_content">
-    <draggable v-model="flowData" handle=".dragbar" @end="onDragEnd">
+    <draggable v-model="currentData" handle=".dragbar" @end="onDragEnd">
       <div
-        v-for="(item, index) in flowData"
+        v-for="(item, index) in currentData"
         :key="`${item.type}${index}`"
         :class="[
           'block',
@@ -17,7 +17,7 @@
             type="text"
             placeholder="cannot be empty"
             class="key-input"
-            @blur="keyInputBlur(item, $event)"
+            @blur="blurKeyInput(item, $event)"
           />
           <i
             class="collapse-down v-json-edit-icon-arrow_drop_down"
@@ -32,14 +32,14 @@
           }}</i>
         </span>
         <span class="json-val">
-          <template v-if="item.type == 'object'">
+          <template v-if="item.type === 'object'">
             <object-view
               :parsedData="item.childParams"
               v-model="item.childParams"
             ></object-view>
           </template>
 
-          <template v-else-if="item.type == 'array'">
+          <template v-else-if="item.type === 'array'">
             <array-view
               :parsedData="item.childParams"
               v-model="item.childParams"
@@ -48,24 +48,24 @@
 
           <template v-else>
             <span class="val">
+              <span v-if="item.type === 'null'" class="val-input">null</span>
               <input
-                type="text"
+                v-if="item.type === 'string'"
                 v-model="item.remark"
+                type="text"
                 class="val-input"
-                v-if="item.type == 'string'"
               />
               <input
-                type="number"
+                v-if="item.type === 'number'"
                 v-model.number="item.remark"
+                type="number"
                 class="val-input"
-                v-if="item.type == 'number'"
-                @input="numberInputChange(item)"
+                @input="changeInputNumber(item)"
               />
               <select
-                name="value"
+                v-if="item.type === 'boolean'"
                 v-model="item.remark"
                 class="val-input"
-                v-if="item.type == 'boolean'"
               >
                 <option :value="true">true</option>
                 <option :value="false">false</option>
@@ -80,7 +80,7 @@
             class="tools-types"
             @change="changeItemType(item, index)"
           >
-            <option v-for="(type, index) in formats" :value="type" :key="index">
+            <option v-for="(type, index) in types" :value="type" :key="index">
               {{ type }}
             </option>
           </select>
@@ -121,27 +121,27 @@ export default {
   props: { parsedData: {} },
   data() {
     return {
-      formats: ["string", "array", "object", "number", "boolean"],
-      flowData: this.parsedData,
+      types: ["object", "array", "string", "number", "boolean", "null"],
+      currentData: this.parsedData,
       toAddItem: false,
       hideMyBlock: {},
     };
   },
   created() {
-    this.flowData = this.parsedData || {};
+    this.currentData = this.parsedData || {};
   },
   watch: {
     parsedData: {
       handler(newValue, oldValue) {
-        this.flowData = this.parsedData;
+        this.currentData = this.parsedData;
       },
     },
   },
   methods: {
     delItem(parentDom, item, index) {
-      this.flowData.splice(index, 1);
+      this.currentData.splice(index, 1);
       if (this.hideMyBlock[index]) this.hideMyBlock[index] = false;
-      this.$emit("input", this.flowData);
+      this.$emit("input", this.currentData);
     },
 
     toggleBlock(index) {
@@ -174,45 +174,53 @@ export default {
       }
 
       if (!oj.name) {
-        alert("please must input a name!");
         return;
       } else {
-        this.flowData.push(oj);
-        this.$emit("input", this.flowData);
+        this.currentData.push(oj);
+        this.$emit("input", this.currentData);
         this.cancelNewItem();
       }
     },
 
-    keyInputBlur(item, e) {
+    blurKeyInput(item, e) {
       if (item.name.length <= 0) {
         e.target.focus();
       }
     },
 
     onDragEnd() {
-      this.$emit("input", this.flowData);
+      this.$emit("input", this.currentData);
     },
 
     changeItemType(item, index) {
-      if (item.type === "array" || item.type === "object") {
-        item.childParams = [];
-        item.remark = null;
-      }
-      if (item.type === "boolean") {
-        item.remark = true;
-        this.hideMyBlock[index] = false;
-      }
-      if (item.type === "string") {
-        item.remark = "";
-        this.hideMyBlock[index] = false;
-      }
-      if (item.type === "number") {
-        item.remark = 0;
-        this.hideMyBlock[index] = false;
+      switch (item.type) {
+        case "array":
+        case "object":
+          item.childParams = [];
+          item.remark = null;
+          break;
+        case "string":
+          item.remark = "";
+          this.hideMyBlock[index] = false;
+          break;
+        case "number":
+          item.remark = 0;
+          this.hideMyBlock[index] = false;
+          break;
+        case "boolean":
+          item.remark = true;
+          this.hideMyBlock[index] = false;
+          break;
+        case "null":
+          item.remark = null;
+          this.hideMyBlock[index] = false;
+          break;
+        default:
+          break;
       }
     },
 
-    numberInputChange(item) {
+    changeInputNumber(item) {
       if (item.remark !== "") {
         item.remark = item.remark ?? 0;
       } else {

@@ -29,18 +29,15 @@ export default {
   },
   data() {
     return {
-      parsedData: [],
-      wrapperType: "object",
+      rootType: "object",
+      lastParsedData: {},
+      parsedData: this.parseJson(this.dataObject),
     };
-  },
-  created() {
-    this.lastParsedData = {};
-    this.parsedData = this.jsonParse(this.dataObject);
   },
   watch: {
     dataObject: {
       handler(newValue) {
-        this.parsedData = this.jsonParse(this.dataObject);
+        this.parsedData = this.parseJson(this.dataObject);
       },
     },
     parsedData: {
@@ -52,7 +49,7 @@ export default {
 
         this.lastParsedData = JSON.parse(strNewValue);
 
-        this.$emit("input", this.makeJson(this.parsedData));
+        this.$emit("input", this.buildJson(this.parsedData));
       },
     },
   },
@@ -60,89 +57,49 @@ export default {
     "object-view": ObjectView,
   },
   methods: {
-    jsonParse(jsonStr) {
-      const parseJson = (json) => {
-        let result = [];
-        let keys = Object.keys(json);
-        keys.forEach((k, index) => {
-          let val = json[k];
-          let parsedVal = val;
+    parseJson(jsonStr) {
+      const parseObject = (json, objectType) => {
+        const result = [];
 
-          if (this.getType(val) == "object") {
-            parsedVal = parseJson(val);
-          } else if (this.getType(val) == "array") {
-            parsedVal = parseArray(val);
-          }
-
-          let opt = {
-            name: k,
-            type: this.getType(val),
+        new Map(Object.entries(json)).forEach((value, key) => {
+          const item = {
+            name: objectType === "object" ? key : null,
+            type: this.getType(value),
+            remark: null,
+            childParams: null,
           };
 
-          if (opt.type == "array" || opt.type == "object") {
-            opt.childParams = parsedVal;
-            opt.remark = null;
-          } else {
-            opt.childParams = null;
-            opt.remark = parsedVal;
+          switch (item.type) {
+            case "object":
+            case "array":
+              item.childParams = parseObject(value, item.type);
+              break;
+            case "transform":
+              item.type = "string";
+              item.remark = value.toString();
+              break;
+            default:
+              item.remark = value;
+              break;
           }
 
-          result.push(opt);
+          result.push(item);
         });
+
         return result;
       };
 
-      //
-      const parseArray = (arrayObj) => {
-        let result = [];
-        for (let i = 0; i < arrayObj.length; ++i) {
-          let val = arrayObj[i];
-          let parsedVal = val;
-          if (this.getType(val) == "object") {
-            parsedVal = parseJson(val);
-          } else if (this.getType(val) == "array") {
-            parsedVal = parseArray(val);
-          }
-
-          let opt = {
-            name: null,
-            type: this.getType(val),
-          };
-
-          if (opt.type == "array" || opt.type == "object") {
-            opt.childParams = parsedVal;
-            opt.remark = null;
-          } else {
-            opt.childParams = null;
-            opt.remark = parsedVal;
-          }
-
-          result.push(opt);
-        }
-        return result;
-      };
-
-      // --
       const parseBody = (data) => {
-        let r = null;
-        switch (this.getType(data)) {
-          case "array":
-            this.wrapperType = "array";
-            r = parseArray(data);
-            break;
-          case "object":
-            this.wrapperType = "object";
-            r = parseJson(data);
-            break;
-        }
-        return r;
+        this.rootType = this.getType(data);
+
+        return parseObject(data, this.rootType);
       };
 
       return parseBody(jsonStr);
     },
 
-    getType(obj) {
-      switch (Object.prototype.toString.call(obj)) {
+    getType(object) {
+      switch (Object.prototype.toString.call(object)) {
         case "[object Array]":
           return "array";
           break;
@@ -150,17 +107,21 @@ export default {
           return "object";
           break;
         case "[object Null]":
-        case "[object Function]":
         case "[object Undefined]":
-          return "string";
+          return "null";
+          break;
+        case "[object Date]":
+        case "[object RegExp]":
+        case "[object Function]":
+          return "transform";
           break;
         default:
-          return typeof obj;
+          return typeof object;
           break;
       }
     },
 
-    makeJson(dataArr) {
+    buildJson(dataArr) {
       const revertWithObj = (data) => {
         let r = {};
         for (let i = 0; i < data.length; ++i) {
@@ -199,16 +160,14 @@ export default {
       };
 
       const revertMain = (data) => {
-        let r = null;
-        switch (this.wrapperType) {
+        switch (this.rootType) {
           case "array":
-            r = revertWithArray(data);
+            return revertWithArray(data);
             break;
           case "object":
-            r = revertWithObj(data);
+            return revertWithObj(data);
             break;
         }
-        return r;
       };
 
       return revertMain(dataArr);
