@@ -126,34 +126,3 @@ export default {
   },
 };
 </script>
-
-<style lang="less">
-.new-item-form {
-  display: block;
-  margin-bottom: 20px;
-  &__inputs-group {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-    & > *:not(:last-child) {
-      margin-right: 5px;
-    }
-  }
-  &__input {
-    flex-grow: 1;
-    min-width: 0;
-    padding: 3px 6px;
-    select& {
-      flex-shrink: 0;
-    }
-  }
-  &__btns-group {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    & > *:not(:last-child) {
-      margin-right: 5px;
-    }
-  }
-}
-</style>
