@@ -9,7 +9,7 @@
 							confirmText: 'confirm',
 							cancelText: 'cancel',
 						}"
-						:objData="jsonData" 
+						:data-object="jsonData" 
 						v-model="jsonData" ></json-editor>
 				</div>
 			</div>
@@ -35,7 +35,7 @@ export default {
 		return {
 			jsonData: {
 				name: 'may',
-				age: null,
+				age: 20,
 				address: ['Panyu Shiqiao on Canton', 'Tianhe', {
 					city: 'forida meta 11'
 				}],

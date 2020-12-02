@@ -1,21 +1,20 @@
 <template>
-  <object-view :parsedData="parsedData" v-model="parsedData"></object-view>
+  <object-view :parsed-data="parsedData" v-model="parsedData"></object-view>
 </template>
 
 <script>
 import ObjectView from "./object-view.vue";
-import cloneDeep from "lodash.clonedeep";
 
 export default {
   name: "JsonEditor",
   props: {
-    objData: {
-      type: [Object, Array],
+    dataObject: {
+      type: Object | Array,
       required: true,
     },
     options: {
       type: Object,
-      default: function () {
+      default() {
         return {
           confirmText: "confirm",
           cancelText: "cancel",
@@ -36,32 +35,32 @@ export default {
   },
   created() {
     this.lastParsedData = {};
-    this.parsedData = this.jsonParse(this.objData);
+    this.parsedData = this.jsonParse(this.dataObject);
   },
   watch: {
-    objData: {
-      handler(newValue, oldValue) {
-        this.parsedData = this.jsonParse(this.objData);
+    dataObject: {
+      handler(newValue) {
+        this.parsedData = this.jsonParse(this.dataObject);
       },
     },
     parsedData: {
-      handler(newValue, oldValue) {
-        if (JSON.stringify(newValue) === JSON.stringify(this.lastParsedData)) {
-          return;
-        }
+      deep: true,
+      handler(newValue) {
+        const strNewValue = JSON.stringify(newValue);
 
-        this.lastParsedData = cloneDeep(newValue);
+        if (strNewValue === JSON.stringify(this.lastParsedData)) return;
+
+        this.lastParsedData = JSON.parse(strNewValue);
 
         this.$emit("input", this.makeJson(this.parsedData));
       },
-      deep: true,
     },
   },
   components: {
     "object-view": ObjectView,
   },
   methods: {
-    jsonParse: function (jsonStr) {
+    jsonParse(jsonStr) {
       const parseJson = (json) => {
         let result = [];
         let keys = Object.keys(json);
@@ -142,7 +141,7 @@ export default {
       return parseBody(jsonStr);
     },
 
-    getType: function (obj) {
+    getType(obj) {
       switch (Object.prototype.toString.call(obj)) {
         case "[object Array]":
           return "array";
@@ -161,7 +160,7 @@ export default {
       }
     },
 
-    makeJson: function (dataArr) {
+    makeJson(dataArr) {
       const revertWithObj = (data) => {
         let r = {};
         for (let i = 0; i < data.length; ++i) {
