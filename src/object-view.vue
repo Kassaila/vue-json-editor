@@ -22,7 +22,7 @@
           <i
             class="collapse-down v-json-edit-icon-arrow_drop_down"
             v-if="item.type == 'object' || item.type == 'array'"
-            @click="closeBlock(index, $event)"
+            @click="toggleBlock(index)"
           ></i>
           <i v-if="item.type == 'object'" class="i-type">{{
             "{" + item.childParams.length + "}"
@@ -78,7 +78,7 @@
           <select
             v-model="item.type"
             class="tools-types"
-            @change="itemTypeChange(item)"
+            @change="changeItemType(item, index)"
           >
             <option v-for="(type, index) in formats" :value="type" :key="index">
               {{ type }}
@@ -144,7 +144,7 @@ export default {
       this.$emit("input", this.flowData);
     },
 
-    closeBlock(index, e) {
+    toggleBlock(index) {
       this.$set(
         this.hideMyBlock,
         index,
@@ -193,19 +193,22 @@ export default {
       this.$emit("input", this.flowData);
     },
 
-    itemTypeChange(item) {
+    changeItemType(item, index) {
       if (item.type === "array" || item.type === "object") {
         item.childParams = [];
         item.remark = null;
       }
       if (item.type === "boolean") {
         item.remark = true;
+        this.hideMyBlock[index] = false;
       }
       if (item.type === "string") {
         item.remark = "";
+        this.hideMyBlock[index] = false;
       }
       if (item.type === "number") {
         item.remark = 0;
+        this.hideMyBlock[index] = false;
       }
     },
 
