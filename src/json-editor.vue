@@ -58,44 +58,44 @@ export default {
   },
   methods: {
     parseJson(jsonStr) {
-      const parseObject = (json, objectType) => {
-        const result = [];
+      const parseItem = (key, value, type) => {
+        const item = {
+          name: type === "object" ? key : null,
+          type: this.getType(value),
+          remark: null,
+          childParams: null,
+        };
 
-        new Map(Object.entries(json)).forEach((value, key) => {
-          const item = {
-            name: objectType === "object" ? key : null,
-            type: this.getType(value),
-            remark: null,
-            childParams: null,
-          };
+        switch (item.type) {
+          case "object":
+          case "array":
+            item.childParams = parseObject(value, item.type);
+            break;
+          case "transform":
+            item.type = "string";
+            item.remark = value.toString();
+            break;
+          default:
+            item.remark = value;
+            break;
+        }
 
-          switch (item.type) {
-            case "object":
-            case "array":
-              item.childParams = parseObject(value, item.type);
-              break;
-            case "transform":
-              item.type = "string";
-              item.remark = value.toString();
-              break;
-            default:
-              item.remark = value;
-              break;
-          }
-
-          result.push(item);
-        });
-
-        return result;
+        return item;
       };
 
-      const parseBody = (data) => {
+      const parseObject = (json, objectType) => {
+        return Object.entries(json).map(([key, value]) =>
+          parseItem(key, value, objectType)
+        );
+      };
+
+      const parseRoot = (data) => {
         this.rootType = this.getType(data);
 
         return parseObject(data, this.rootType);
       };
 
-      return parseBody(jsonStr);
+      return parseRoot(jsonStr);
     },
 
     getType(object) {
