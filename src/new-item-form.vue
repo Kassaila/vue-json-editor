@@ -10,6 +10,9 @@
         @change="checkKey"
       />
       <template v-if="item.type !== 'array' && item.type !== 'object'">
+        <span v-if="item.type === 'null'" class="new-item-form__input"
+          >null</span
+        >
         <input
           v-if="item.type === 'string'"
           v-model.trim="item.value"
@@ -66,10 +69,9 @@ export default {
       default: true,
     },
   },
-  inject: ["formBtnText"],
+  inject: ["typesList", "formBtnText"],
   data() {
     return {
-      typesList: ["string", "array", "object", "number", "boolean"],
       item: {
         type: "string",
         key: "",
@@ -90,15 +92,18 @@ export default {
     },
     changeType() {
       switch (this.item.type) {
+        case "array":
+        case "object":
+          this.item.value = [];
+          break;
         case "number":
           this.item.value = 0;
           break;
         case "boolean":
           this.item.value = true;
           break;
-        case "array":
-        case "object":
-          this.item.value = [];
+        case "null":
+          this.item.value = null;
           break;
         default:
           this.item.value = "";

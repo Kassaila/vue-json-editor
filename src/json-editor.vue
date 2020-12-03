@@ -1,5 +1,9 @@
 <template>
-  <object-view :parsed-data="currentData" v-model="currentData"></object-view>
+  <object-view
+    :object-type="rootType"
+    :parsed-data="currentData"
+    v-model="currentData"
+  ></object-view>
 </template>
 
 <script>
@@ -27,6 +31,7 @@ export default {
   },
   provide() {
     return {
+      typesList: ["object", "array", "string", "number", "boolean", "null"],
       formBtnText: this.options,
     };
   },
@@ -122,10 +127,12 @@ export default {
             case "object":
               const value = buildObject(item.childParams, item.type);
 
-              return item.name ? [item.name, value] : value;
+              return item.name !== null ? [item.name, value] : value;
               break;
             default:
-              return item.name ? [item.name, item.remark] : item.remark;
+              return item.name !== null
+                ? [item.name, item.remark]
+                : item.remark;
               break;
           }
         });
