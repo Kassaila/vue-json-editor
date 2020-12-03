@@ -1,5 +1,8 @@
 <template>
-  <object-view :parsed-data="parsedData" v-model="parsedData"></object-view>
+  <object-view
+    :parsed-data="parsedData.current"
+    v-model="parsedData.current"
+  ></object-view>
 </template>
 
 <script>
@@ -7,6 +10,9 @@ import ObjectView from "./object-view.vue";
 
 export default {
   name: "JsonEditor",
+  components: {
+    "object-view": ObjectView,
+  },
   props: {
     dataObject: {
       type: Object | Array,
@@ -30,31 +36,30 @@ export default {
   data() {
     return {
       rootType: "object",
-      lastParsedData: {},
-      parsedData: this.parseJson(this.dataObject),
+      parsedData: {
+        current: this.parseJson(this.dataObject),
+        cached: {},
+      },
     };
   },
   watch: {
     dataObject: {
-      handler(newValue) {
-        this.parsedData = this.parseJson(this.dataObject);
+      handler() {
+        this.parsedData.current = this.parseJson(this.dataObject);
       },
     },
     parsedData: {
       deep: true,
-      handler(newValue) {
-        const strNewValue = JSON.stringify(newValue);
+      handler(newData) {
+        const newDataStr = JSON.stringify(newData);
 
-        if (strNewValue === JSON.stringify(this.lastParsedData)) return;
+        if (newDataStr === JSON.stringify(this.paresedData.cached)) return;
 
-        this.lastParsedData = JSON.parse(strNewValue);
+        this.paresedData.cached = JSON.parse(newDataStr);
 
-        this.$emit("input", this.buildJson(this.parsedData));
+        this.$emit("input", this.buildJson(this.parsedData.current));
       },
     },
-  },
-  components: {
-    "object-view": ObjectView,
   },
   methods: {
     parseJson(jsonStr) {
