@@ -1,8 +1,5 @@
 <template>
-  <object-view
-    :parsed-data="parsedData.current"
-    v-model="parsedData.current"
-  ></object-view>
+  <object-view :parsed-data="currentData" v-model="currentData"></object-view>
 </template>
 
 <script>
@@ -36,28 +33,26 @@ export default {
   data() {
     return {
       rootType: "object",
-      parsedData: {
-        current: this.parseJson(this.dataObject),
-        cached: {},
-      },
+      currentData: this.parseJson(this.dataObject),
+      cachedData: {},
     };
   },
   watch: {
     dataObject: {
       handler() {
-        this.parsedData.current = this.parseJson(this.dataObject);
+        this.currentData = this.parseJson(this.dataObject);
       },
     },
-    parsedData: {
+    currentData: {
       deep: true,
       handler(newData) {
         const newDataStr = JSON.stringify(newData);
 
-        if (newDataStr === JSON.stringify(this.paresedData.cached)) return;
+        if (newDataStr === JSON.stringify(this.cachedData)) return;
 
-        this.paresedData.cached = JSON.parse(newDataStr);
+        this.cachedData = JSON.parse(newDataStr);
 
-        this.$emit("input", this.buildJson(this.parsedData.current));
+        this.$emit("input", this.buildJson(this.currentData));
       },
     },
   },
@@ -177,6 +172,9 @@ export default {
 
       return revertMain(dataArr);
     },
+  },
+  mounted() {
+    this.$emit("input", this.buildJson(this.currentData));
   },
 };
 </script>
