@@ -31,8 +31,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
-    "@babel/eslint-parser": "^7.12.1",
-    "@babel/eslint-plugin": "^7.12.1",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
     "@babel/plugin-proposal-private-methods": "^7.12.1",
@@ -55,8 +53,6 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
-    "highlight.js": "^9.15.6",
-    "lodash.clonedeep": "^4.5.0",
     "vue": "^2.6.12",
     "vuedraggable": "^2.24.3"
   }

@@ -1,8 +1,8 @@
 <template>
   <div class="block_content">
-    <draggable v-model="flowData" handle=".dragbar" @end="onDragEnd">
+    <draggable v-model="currentData" handle=".dragbar" @end="onDragEnd">
       <div
-        v-for="(item, index) in flowData"
+        v-for="(item, index) in currentData"
         :key="`${item.type}${index}`"
         :class="[
           'block',
@@ -17,12 +17,12 @@
             type="text"
             placeholder="cannot be empty"
             class="key-input"
-            @blur="keyInputBlur(item, $event)"
+            @blur="blurKeyInput(item, $event)"
           />
           <i
             class="collapse-down v-json-edit-icon-arrow_drop_down"
             v-if="item.type == 'object' || item.type == 'array'"
-            @click="closeBlock(index, $event)"
+            @click="toggleBlock(index)"
           ></i>
           <i v-if="item.type == 'object'" class="i-type">{{
             "{" + item.childParams.length + "}"
@@ -32,14 +32,14 @@
           }}</i>
         </span>
         <span class="json-val">
-          <template v-if="item.type == 'object'">
-            <json-view
+          <template v-if="item.type === 'object'">
+            <object-view
               :parsedData="item.childParams"
               v-model="item.childParams"
-            ></json-view>
+            ></object-view>
           </template>
 
-          <template v-else-if="item.type == 'array'">
+          <template v-else-if="item.type === 'array'">
             <array-view
               :parsedData="item.childParams"
               v-model="item.childParams"
@@ -48,24 +48,24 @@
 
           <template v-else>
             <span class="val">
+              <span v-if="item.type === 'null'" class="val-input">null</span>
               <input
-                type="text"
+                v-if="item.type === 'string'"
                 v-model="item.remark"
+                type="text"
                 class="val-input"
-                v-if="item.type == 'string'"
               />
               <input
-                type="number"
+                v-if="item.type === 'number'"
                 v-model.number="item.remark"
+                type="number"
                 class="val-input"
-                v-if="item.type == 'number'"
-                @input="numberInputChange(item)"
+                @input="changeInputNumber(item)"
               />
               <select
-                name="value"
+                v-if="item.type === 'boolean'"
                 v-model="item.remark"
                 class="val-input"
-                v-if="item.type == 'boolean'"
               >
                 <option :value="true">true</option>
                 <option :value="false">false</option>
@@ -78,9 +78,9 @@
           <select
             v-model="item.type"
             class="tools-types"
-            @change="itemTypeChange(item)"
+            @change="changeItemType(item, index)"
           >
-            <option v-for="(type, index) in formats" :value="type" :key="index">
+            <option v-for="(type, index) in types" :value="type" :key="index">
               {{ type }}
             </option>
           </select>
@@ -92,54 +92,59 @@
       </div>
     </draggable>
 
-    <item-add-form
+    <new-item-form
       v-if="toAddItem"
-      @confirm="newItem"
-      @cancel="cancelNewItem"
-    ></item-add-form>
+      @add-new-item="newItem"
+      @cancel-new-item="cancelNewItem"
+    ></new-item-form>
 
-    <div class="block add-key" @click="addItem" v-if="!toAddItem">
-      <i class="v-json-edit-icon-add"></i>
-    </div>
+    <button
+      v-if="!toAddItem"
+      type="button"
+      class="add-new-item"
+      @click="addItem"
+    >
+      +
+    </button>
   </div>
 </template>
 
 <script>
-import ItemAddForm from "./ItemAddForm.vue";
+import NewItemForm from "./new-item-form.vue";
 
 export default {
-  name: "JsonView",
+  name: "ObjectView",
+  components: {
+    "new-item-form": NewItemForm,
+    "array-view": () => import("./array-view.vue"),
+  },
   props: { parsedData: {} },
   data() {
     return {
-      formats: ["string", "array", "object", "number", "boolean"],
-      flowData: this.parsedData,
+      types: ["object", "array", "string", "number", "boolean", "null"],
+      currentData: this.parsedData,
       toAddItem: false,
       hideMyBlock: {},
     };
   },
   created() {
-    this.flowData = this.parsedData || {};
+    this.currentData = this.parsedData || {};
   },
   watch: {
     parsedData: {
       handler(newValue, oldValue) {
-        this.flowData = this.parsedData;
+        this.currentData = this.parsedData;
       },
     },
   },
-  components: {
-    "item-add-form": ItemAddForm,
-    "array-view": () => import("./ArrayView.vue"),
-  },
   methods: {
     delItem(parentDom, item, index) {
-      this.flowData.splice(index, 1);
+      this.currentData.splice(index, 1);
       if (this.hideMyBlock[index]) this.hideMyBlock[index] = false;
-      this.$emit("input", this.flowData);
+      this.$emit("input", this.currentData);
     },
 
-    closeBlock(index, e) {
+    toggleBlock(index) {
       this.$set(
         this.hideMyBlock,
         index,
@@ -161,50 +166,61 @@ export default {
         type: obj.type,
       };
       if (obj.type == "array" || obj.type == "object") {
-        oj.childParams = obj.val;
+        oj.childParams = obj.value;
         oj.remark = null;
       } else {
         oj.childParams = null;
-        oj.remark = obj.val;
+        oj.remark = obj.value;
       }
 
       if (!oj.name) {
-        alert("please must input a name!");
         return;
       } else {
-        this.flowData.push(oj);
-        this.$emit("input", this.flowData);
+        this.currentData.push(oj);
+        this.$emit("input", this.currentData);
         this.cancelNewItem();
       }
     },
 
-    keyInputBlur(item, e) {
+    blurKeyInput(item, e) {
       if (item.name.length <= 0) {
         e.target.focus();
       }
     },
 
     onDragEnd() {
-      this.$emit("input", this.flowData);
+      this.$emit("input", this.currentData);
     },
 
-    itemTypeChange(item) {
-      if (item.type === "array" || item.type === "object") {
-        item.childParams = [];
-        item.remark = null;
-      }
-      if (item.type === "boolean") {
-        item.remark = true;
-      }
-      if (item.type === "string") {
-        item.remark = "";
-      }
-      if (item.type === "number") {
-        item.remark = 0;
+    changeItemType(item, index) {
+      switch (item.type) {
+        case "array":
+        case "object":
+          item.childParams = [];
+          item.remark = null;
+          break;
+        case "string":
+          item.remark = "";
+          this.hideMyBlock[index] = false;
+          break;
+        case "number":
+          item.remark = 0;
+          this.hideMyBlock[index] = false;
+          break;
+        case "boolean":
+          item.remark = true;
+          this.hideMyBlock[index] = false;
+          break;
+        case "null":
+          item.remark = null;
+          this.hideMyBlock[index] = false;
+          break;
+        default:
+          break;
       }
     },
 
-    numberInputChange(item) {
+    changeInputNumber(item) {
       if (item.remark !== "") {
         item.remark = item.remark ?? 0;
       } else {

@@ -15,7 +15,8 @@ config.output = {
 
 config.devtool = 'inline-source-map';
 config.devServer = {
-  contentBase: './dist'
+  contentBase: './dist',
+  port: 9000
 };
 
 config.plugins = config.plugins.concat([
