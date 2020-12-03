@@ -1,6 +1,5 @@
 import JsonEditor from './json-editor.vue';
 import ObjectView from './object-view.vue';
-import ArrayView from './array-view.vue';
 import draggable from 'vuedraggable';
 import PackageFile from '../package.json';
 
@@ -12,7 +11,6 @@ const install = Vue => {
   Vue.component('draggable', draggable);
   Vue.component('json-editor', JsonEditor);
   Vue.component('object-view', ObjectView);
-  Vue.component('array-view', ArrayView);
 };
 
 export default install;
