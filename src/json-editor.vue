@@ -32,8 +32,7 @@ export default {
   },
   data() {
     return {
-      rootType: "object",
-      currentData: this.parseJson(this.dataObject),
+      currentData: [],
       cachedData: {},
     };
   },
@@ -45,8 +44,8 @@ export default {
     },
     currentData: {
       deep: true,
-      handler(newData) {
-        const newDataStr = JSON.stringify(newData);
+      handler() {
+        const newDataStr = JSON.stringify(this.currentData);
 
         if (newDataStr === JSON.stringify(this.cachedData)) return;
 
@@ -57,7 +56,7 @@ export default {
     },
   },
   methods: {
-    parseJson(jsonStr) {
+    parseJson(dataObject) {
       const parseItem = (key, value, type) => {
         const item = {
           name: type === "object" ? key : null,
@@ -83,19 +82,13 @@ export default {
         return item;
       };
 
-      const parseObject = (json, objectType) => {
-        return Object.entries(json).map(([key, value]) =>
-          parseItem(key, value, objectType)
+      const parseObject = (object, type) => {
+        return Object.entries(object).map(([key, value]) =>
+          parseItem(key, value, type)
         );
       };
 
-      const parseRoot = (data) => {
-        this.rootType = this.getType(data);
-
-        return parseObject(data, this.rootType);
-      };
-
-      return parseRoot(jsonStr);
+      return parseObject(dataObject, this.rootType);
     },
 
     getType(object) {
@@ -121,59 +114,45 @@ export default {
       }
     },
 
-    buildJson(dataArr) {
-      const revertWithObj = (data) => {
-        let r = {};
-        for (let i = 0; i < data.length; ++i) {
-          let el = data[i];
-          let key, val;
-          key = el.name;
-          if (el.type == "array") {
-            val = revertWithArray(el.childParams);
-          } else if (el.type == "object") {
-            val = revertWithObj(el.childParams);
-          } else {
-            val = el.remark;
+    buildJson(dataTree) {
+      const buildObject = (data, type) => {
+        const buildData = data.map((item, i) => {
+          switch (item.type) {
+            case "array":
+            case "object":
+              const value = buildObject(item.childParams, item.type);
+
+              return item.name ? [item.name, value] : value;
+              break;
+            default:
+              return item.name ? [item.name, item.remark] : item.remark;
+              break;
           }
+        });
 
-          r[key] = val;
-        }
-        return r;
-      };
-
-      const revertWithArray = (data) => {
-        let arr = [];
-        for (let i = 0; i < data.length; ++i) {
-          let el = data[i];
-          let r;
-          if (el.type == "array") {
-            r = revertWithArray(el.childParams);
-          } else if (el.type == "object") {
-            r = revertWithObj(el.childParams);
-          } else {
-            r = el.remark;
-          }
-
-          arr.push(r);
-        }
-        return arr;
-      };
-
-      const revertMain = (data) => {
-        switch (this.rootType) {
+        switch (type) {
           case "array":
-            return revertWithArray(data);
+            return buildData;
             break;
           case "object":
-            return revertWithObj(data);
+            return Object.fromEntries(buildData);
+            break;
+          default:
+            return buildData[0];
             break;
         }
       };
 
-      return revertMain(dataArr);
+      return buildObject(dataTree, this.rootType);
+    },
+  },
+  computed: {
+    rootType() {
+      return this.getType(this.dataObject);
     },
   },
   mounted() {
+    this.currentData = this.parseJson(this.dataObject);
     this.$emit("input", this.buildJson(this.currentData));
   },
 };
