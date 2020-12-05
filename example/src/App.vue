@@ -1,32 +1,23 @@
 <template>
-  <div class="j-w">
-    <h1 class="t">vue-json-editor</h1>
-    <div class="editor-w clearfix">
-      <div class="w-2">
-        <div class="editor">
-          <json-editor
-            :options="{
-              confirmText: 'confirm',
-              cancelText: 'cancel',
-            }"
-            :data-object="jsonData"
-            v-model="jsonData"
-          ></json-editor>
-        </div>
+  <div class="wrapper">
+    <h1 class="page-title">vue-json-editor</h1>
+    <div class="container">
+      <div class="editor">
+        <json-editor
+          :options="{
+            confirmText: 'confirm',
+            cancelText: 'cancel',
+          }"
+          :data-object="jsonData"
+          v-model="jsonData"
+        ></json-editor>
       </div>
-      <div class="w-2">
-        <div class="code-pre">
-          <div slot="content">
-            <pre>
-							<code class="json">{{ codeJson }}</code>
-						</pre>
-          </div>
-        </div>
+      <div class="code">
+        <code class="json">{{ codeJson }}</code>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 export default {
   name: 'app',
@@ -107,3 +98,22 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+.page-title {
+  text-align: center;
+}
+.container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+  padding: 30px;
+}
+.code {
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 1px 3px 10px rgba(0, 0, 0, 0.25);
+  .json {
+    white-space: pre-wrap;
+  }
+}
+</style>

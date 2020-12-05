@@ -8,4 +8,11 @@ config.watchOptions = {
   ignored: ['node_modules'],
 };
 
+config.devtool = 'inline-source-map';
+
+config.devServer = {
+  contentBase: './dist',
+  port: 9000,
+};
+
 module.exports = config;

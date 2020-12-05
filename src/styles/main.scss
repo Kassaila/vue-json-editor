@@ -32,7 +32,7 @@ select {
     flex-grow: 1;
     min-width: 0;
     padding: 3px 6px;
-    select& {
+    select {
       flex-shrink: 0;
     }
   }

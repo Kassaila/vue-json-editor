@@ -28,7 +28,7 @@ config.module = {
       use: ['vue-style-loader', 'css-loader'],
     },
     {
-      test: /\.less$/,
+      test: /\.scss$/,
       use: [
         {
           loader: 'style-loader',
@@ -37,7 +37,7 @@ config.module = {
           loader: 'css-loader',
         },
         {
-          loader: 'less-loader',
+          loader: 'sass-loader',
         },
       ],
     },
@@ -52,10 +52,8 @@ config.plugins = [
   new CleanWebpackPlugin(),
 ];
 
-config.devtool = 'inline-source-map';
-config.devServer = {
-  contentBase: './dist',
-  port: 9000,
+config.externals = {
+  vue: 'Vue',
 };
 
 module.exports = config;

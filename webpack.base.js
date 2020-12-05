@@ -19,7 +19,7 @@ config.module = {
       use: ['vue-style-loader', 'css-loader'],
     },
     {
-      test: /\.less$/,
+      test: /\.scss$/,
       use: [
         {
           loader: 'style-loader',
@@ -28,7 +28,7 @@ config.module = {
           loader: 'css-loader',
         },
         {
-          loader: 'less-loader',
+          loader: 'sass-loader',
         },
       ],
     },
@@ -36,14 +36,13 @@ config.module = {
 };
 
 config.entry = './src/index.js';
-
 config.output = {
   path: path.resolve(__dirname, './dist'),
   filename: 'vue-json-editor.js',
   library: 'vue-json-editor',
   libraryTarget: 'umd',
 };
-
+config.devtool = 'none';
 config.externals = {
   vue: 'Vue',
 };
