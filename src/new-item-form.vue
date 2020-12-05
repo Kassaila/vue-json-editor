@@ -10,9 +10,7 @@
         @change="checkKey"
       />
       <template v-if="item.type !== 'array' && item.type !== 'object'">
-        <span v-if="item.type === 'null'" class="new-item-form__input"
-          >null</span
-        >
+        <span v-if="item.type === 'null'" class="new-item-form__input">null</span>
         <input
           v-if="item.type === 'string'"
           v-model.trim="item.value"
@@ -27,21 +25,12 @@
           placeholder="value"
           class="new-item-form__input"
         />
-        <select
-          v-if="item.type === 'boolean'"
-          v-model="item.value"
-          class="new-item-form__input"
-        >
+        <select v-if="item.type === 'boolean'" v-model="item.value" class="new-item-form__input">
           <option value="true">true</option>
           <option value="false">false</option>
         </select>
       </template>
-      <select
-        v-once
-        v-model="item.type"
-        class="new-item-form__input"
-        @change="changeType"
-      >
+      <select v-once v-model="item.type" class="new-item-form__input" @change="changeType">
         <option v-for="(item, index) in typesList" :value="item" :key="index">
           {{ item }}
         </option>
@@ -61,52 +50,52 @@
 
 <script>
 export default {
-  name: "NewItemForm",
+  name: 'NewItemForm',
   props: {
     requiredKey: {
       type: Boolean,
       required: false,
-      default: true,
-    },
+      default: true
+    }
   },
-  inject: ["typesList", "formBtnText"],
+  inject: ['typesList', 'formBtnText'],
   data() {
     return {
       item: {
-        type: "string",
-        key: "",
-        value: "",
+        type: 'string',
+        key: '',
+        value: ''
       },
-      keyPlaceholder: "key",
+      keyPlaceholder: 'key'
     };
   },
   methods: {
     checkKey() {
-      this.keyPlaceholder = this.item.key !== "" ? "key" : "cannot be empty";
+      this.keyPlaceholder = this.item.key !== '' ? 'key' : 'cannot be empty';
 
       if (this.requiredKey) {
-        return this.item.key !== "";
+        return this.item.key !== '';
       } else {
         return true;
       }
     },
     changeType() {
       switch (this.item.type) {
-        case "array":
-        case "object":
+        case 'array':
+        case 'object':
           this.item.value = [];
           break;
-        case "number":
+        case 'number':
           this.item.value = 0;
           break;
-        case "boolean":
+        case 'boolean':
           this.item.value = true;
           break;
-        case "null":
+        case 'null':
           this.item.value = null;
           break;
         default:
-          this.item.value = "";
+          this.item.value = '';
           break;
       }
     },
@@ -114,20 +103,20 @@ export default {
       if (!this.checkKey()) return;
 
       switch (this.item.type) {
-        case "number":
+        case 'number':
           this.item.value = Number(this.item.value);
           break;
-        case "boolean":
+        case 'boolean':
           this.item.value = Boolean(this.item.value);
         default:
           break;
       }
 
-      this.$emit("add-new-item", this.item);
+      this.$emit('add-new-item', this.item);
     },
     cancel() {
-      this.$emit("cancel-new-item");
-    },
-  },
+      this.$emit('cancel-new-item');
+    }
+  }
 };
 </script>
