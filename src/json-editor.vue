@@ -12,40 +12,40 @@ import ObjectView from './object-view.vue';
 export default {
   name: 'JsonEditor',
   components: {
-    'object-view': ObjectView
+    'object-view': ObjectView,
   },
   props: {
     dataObject: {
       type: Object | Array,
-      required: true
+      required: true,
     },
     options: {
       type: Object,
       default() {
         return {
           confirmText: 'confirm',
-          cancelText: 'cancel'
+          cancelText: 'cancel',
         };
-      }
-    }
+      },
+    },
   },
   provide() {
     return {
       typesList: ['object', 'array', 'string', 'number', 'boolean', 'null'],
-      formBtnText: this.options
+      formBtnText: this.options,
     };
   },
   data() {
     return {
       currentData: [],
-      cachedData: {}
+      cachedData: {},
     };
   },
   watch: {
     dataObject: {
       handler() {
         this.currentData = this.parseJson(this.dataObject);
-      }
+      },
     },
     currentData: {
       deep: true,
@@ -57,8 +57,8 @@ export default {
         this.cachedData = JSON.parse(newDataStr);
 
         this.$emit('input', this.buildJson(this.currentData));
-      }
-    }
+      },
+    },
   },
   methods: {
     parseJson(dataObject) {
@@ -67,7 +67,7 @@ export default {
           name: type === 'object' ? key : null,
           type: this.getType(value),
           remark: null,
-          childParams: null
+          childParams: null,
         };
 
         switch (item.type) {
@@ -147,17 +147,17 @@ export default {
       };
 
       return buildObject(dataTree, this.rootType);
-    }
+    },
   },
   computed: {
     rootType() {
       return this.getType(this.dataObject);
-    }
+    },
   },
   mounted() {
     this.currentData = this.parseJson(this.dataObject);
     this.$emit('input', this.buildJson(this.currentData));
-  }
+  },
 };
 </script>
 

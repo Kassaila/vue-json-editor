@@ -89,32 +89,32 @@ export default {
   name: 'ObjectView',
   components: {
     draggable,
-    NewItemForm
+    NewItemForm,
   },
   inject: ['typesList'],
   props: {
     objectType: {
       type: String,
-      required: false
+      required: false,
     },
     parsedData: {
       type: Array,
-      required: true
-    }
+      required: true,
+    },
   },
   data() {
     return {
       currentData: this.parsedData ?? [],
       itemForm: false,
-      hideMyBlock: {}
+      hideMyBlock: {},
     };
   },
   watch: {
     parsedData: {
       handler() {
         this.currentData = this.parsedData;
-      }
-    }
+      },
+    },
   },
   methods: {
     deleteItem(parentDom, item, index) {
@@ -136,7 +136,7 @@ export default {
         childParams: null,
         name: this.objectType === 'object' ? item.key : null,
         remark: null,
-        type: item.type
+        type: item.type,
       };
 
       switch (newItem.type) {
@@ -194,7 +194,7 @@ export default {
       } else {
         item.remark = 0;
       }
-    }
-  }
+    },
+  },
 };
 </script>

@@ -55,8 +55,8 @@ export default {
     requiredKey: {
       type: Boolean,
       required: false,
-      default: true
-    }
+      default: true,
+    },
   },
   inject: ['typesList', 'formBtnText'],
   data() {
@@ -64,9 +64,9 @@ export default {
       item: {
         type: 'string',
         key: '',
-        value: ''
+        value: '',
       },
-      keyPlaceholder: 'key'
+      keyPlaceholder: 'key',
     };
   },
   methods: {
@@ -116,7 +116,7 @@ export default {
     },
     cancel() {
       this.$emit('cancel-new-item');
-    }
-  }
+    },
+  },
 };
 </script>

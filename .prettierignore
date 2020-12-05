@@ -32,18 +32,9 @@ Thumbs.db
 
 # runtime assets
 /runtime
-/src/public/hot
-/src/public/storage
-/src/storage/debugbar/*
-/src/storage/framework/cache/*
-/src/storage/framework/sessions/*
-/src/storage/framework/testing/*
-/src/storage/framework/views/*
-/src/storage/logs/*
-/src/public/assets
-/dist
 
-# example
+# production
+/dist
 /example/dist
 
 # Logs

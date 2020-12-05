@@ -4,7 +4,7 @@ import PackageFile from '../package.json';
 
 const VERSION = PackageFile.version;
 
-const install = Vue => {
+const install = (Vue) => {
   if (install.installed) return;
 
   Vue.component('json-editor', JsonEditor);
@@ -15,5 +15,5 @@ export default install;
 
 export const components = {
   JsonEditor,
-  VERSION
+  VERSION,
 };
