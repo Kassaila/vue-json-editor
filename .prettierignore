@@ -1,0 +1,45 @@
+# configs and main entry
+.env*
+!.env.example
+
+# IDE config
+/src/.idea
+/Homestead.json
+/Homestead.yaml
+/_ide_helper.php
+/.phpstorm.meta.php
+/.idea
+/nbproject
+/.buildpath
+/.project
+/.settings
+/jsconfig.json
+/.git/
+
+# vendor
+/vendor/
+/node_modules/
+*.hot-update.json
+*.hot-update.js
+composer.phar
+composer.lock
+/example/node_modules
+
+# caches
+Thumbs.db
+.DS_Store
+/src/bootstrap/cache/*
+
+# runtime assets
+/runtime
+
+# production
+/dist
+/example/dist
+
+# Logs
+npm-debug.log
+yarn-error.log
+
+# Keep desired directory structure with .gitkeep files
+!.gitkeep

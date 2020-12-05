@@ -13,8 +13,8 @@ npm i @kassaila/vue-json-editor
 ## Usage
 
 ```javascript
-import Vue from "vue";
-import JsonEditor from "vue-json-editor";
+import Vue from 'vue';
+import JsonEditor from 'vue-json-editor';
 
 Vue.use(JsonEditor);
 ```
