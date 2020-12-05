@@ -1,51 +1,39 @@
 <template>
   <div class="block_content">
-    <draggable v-model="currentData" handle=".dragbar" @end="onDragEnd">
+    <draggable v-model="currentData" handle=".dragbar" @end="dragEnd">
       <div
         v-for="(item, index) in currentData"
         :key="`${item.type}${index}`"
-        :class="[
-          'block',
-          'clearfix',
-          { 'hide-block': hideMyBlock[index] == true },
-        ]"
+        class="block"
+        :class="{ 'hide-block': hideMyBlock[index] == true }"
       >
         <span class="json-key">
           <input
-            v-if="typeof item.name == 'string'"
+            v-if="item.name !== null"
             v-model="item.name"
             type="text"
             placeholder="cannot be empty"
             class="key-input"
             @blur="blurKeyInput(item, $event)"
           />
+          <i v-else>{{ index }}. </i>
+          <i v-if="item.type === 'object'" class="i-type">{{ `{ ${item.childParams.length} }` }}</i>
+          <i v-if="item.type === 'array'" class="i-type">{{ `[ ${item.childParams.length} ]` }}</i>
           <i
             class="collapse-down v-json-edit-icon-arrow_drop_down"
-            v-if="item.type == 'object' || item.type == 'array'"
+            v-if="item.type === 'object' || item.type === 'array'"
             @click="toggleBlock(index)"
-          ></i>
-          <i v-if="item.type == 'object'" class="i-type">{{
-            "{" + item.childParams.length + "}"
-          }}</i>
-          <i v-if="item.type == 'array'" class="i-type">{{
-            "[" + item.childParams.length + "]"
-          }}</i>
+            >^</i
+          >
         </span>
         <span class="json-val">
-          <template v-if="item.type === 'object'">
+          <template v-if="item.type === 'object' || item.type === 'array'">
             <object-view
-              :parsedData="item.childParams"
+              :object-type="item.type"
+              :parsed-data="item.childParams"
               v-model="item.childParams"
             ></object-view>
           </template>
-
-          <template v-else-if="item.type === 'array'">
-            <array-view
-              :parsedData="item.childParams"
-              v-model="item.childParams"
-            ></array-view>
-          </template>
-
           <template v-else>
             <span class="val">
               <span v-if="item.type === 'null'" class="val-input">null</span>
@@ -62,11 +50,7 @@
                 class="val-input"
                 @input="changeInputNumber(item)"
               />
-              <select
-                v-if="item.type === 'boolean'"
-                v-model="item.remark"
-                class="val-input"
-              >
+              <select v-if="item.type === 'boolean'" v-model="item.remark" class="val-input">
                 <option :value="true">true</option>
                 <option :value="false">false</option>
               </select>
@@ -75,143 +59,128 @@
         </span>
 
         <div class="tools">
-          <select
-            v-model="item.type"
-            class="tools-types"
-            @change="changeItemType(item, index)"
-          >
-            <option v-for="(type, index) in types" :value="type" :key="index">
+          <select v-model="item.type" class="tools-types" @change="changeItemType(item, index)">
+            <option v-for="(type, index) in typesList" :value="type" :key="index">
               {{ type }}
             </option>
           </select>
-          <i class="dragbar v-json-edit-icon-drag"></i>
-          <i class="del-btn" @click="delItem(parsedData, item, index)">
-            <i class="v-json-edit-icon-huishouzhan_huaban"></i>
-          </i>
+          <i class="dragbar v-json-edit-icon-drag">=</i>
+          <i class="del-btn" @click="deleteItem(parsedData, item, index)"> - </i>
         </div>
       </div>
     </draggable>
 
     <new-item-form
-      v-if="toAddItem"
-      @add-new-item="newItem"
-      @cancel-new-item="cancelNewItem"
+      v-if="itemForm"
+      @add-new-item="createItem"
+      @cancel-new-item="toggleItemForm"
+      :requiredKey="objectType !== 'array'"
     ></new-item-form>
 
-    <button
-      v-if="!toAddItem"
-      type="button"
-      class="add-new-item"
-      @click="addItem"
-    >
-      +
-    </button>
+    <button v-if="!itemForm" type="button" class="add-new-item" @click="toggleItemForm">+</button>
   </div>
 </template>
 
 <script>
-import NewItemForm from "./new-item-form.vue";
+import draggable from 'vuedraggable';
+import NewItemForm from './new-item-form.vue';
 
 export default {
-  name: "ObjectView",
+  name: 'ObjectView',
   components: {
-    "new-item-form": NewItemForm,
-    "array-view": () => import("./array-view.vue"),
+    draggable,
+    NewItemForm,
   },
-  props: { parsedData: {} },
+  inject: ['typesList'],
+  props: {
+    objectType: {
+      type: String,
+      required: false,
+    },
+    parsedData: {
+      type: Array,
+      required: true,
+    },
+  },
   data() {
     return {
-      types: ["object", "array", "string", "number", "boolean", "null"],
-      currentData: this.parsedData,
-      toAddItem: false,
+      currentData: this.parsedData ?? [],
+      itemForm: false,
       hideMyBlock: {},
     };
   },
-  created() {
-    this.currentData = this.parsedData || {};
-  },
   watch: {
     parsedData: {
-      handler(newValue, oldValue) {
+      handler() {
         this.currentData = this.parsedData;
       },
     },
   },
   methods: {
-    delItem(parentDom, item, index) {
+    deleteItem(parentDom, item, index) {
       this.currentData.splice(index, 1);
       if (this.hideMyBlock[index]) this.hideMyBlock[index] = false;
-      this.$emit("input", this.currentData);
+      this.$emit('input', this.currentData);
     },
 
     toggleBlock(index) {
-      this.$set(
-        this.hideMyBlock,
-        index,
-        this.hideMyBlock[index] ? false : true
-      );
+      this.$set(this.hideMyBlock, index, this.hideMyBlock[index] ? false : true);
     },
 
-    addItem() {
-      this.toAddItem = true;
+    toggleItemForm() {
+      this.itemForm = !this.itemForm;
     },
 
-    cancelNewItem() {
-      this.toAddItem = false;
-    },
-
-    newItem(obj) {
-      let oj = {
-        name: obj.key,
-        type: obj.type,
+    createItem(item) {
+      const newItem = {
+        childParams: null,
+        name: this.objectType === 'object' ? item.key : null,
+        remark: null,
+        type: item.type,
       };
-      if (obj.type == "array" || obj.type == "object") {
-        oj.childParams = obj.value;
-        oj.remark = null;
-      } else {
-        oj.childParams = null;
-        oj.remark = obj.value;
+
+      switch (newItem.type) {
+        case 'array':
+        case 'object':
+          newItem.childParams = item.value;
+          break;
+        default:
+          newItem.remark = item.value;
+          break;
       }
 
-      if (!oj.name) {
-        return;
-      } else {
-        this.currentData.push(oj);
-        this.$emit("input", this.currentData);
-        this.cancelNewItem();
-      }
+      this.currentData.push(newItem);
+      this.$emit('input', this.currentData);
+      this.toggleItemForm();
     },
-
     blurKeyInput(item, e) {
-      if (item.name.length <= 0) {
+      if (item.name.length === 0) {
         e.target.focus();
       }
     },
-
-    onDragEnd() {
-      this.$emit("input", this.currentData);
+    dragEnd() {
+      this.$emit('input', this.currentData);
     },
-
     changeItemType(item, index) {
       switch (item.type) {
-        case "array":
-        case "object":
+        case 'array':
+        case 'object':
           item.childParams = [];
           item.remark = null;
           break;
-        case "string":
-          item.remark = "";
+        case 'string':
+          item.remark = '';
           this.hideMyBlock[index] = false;
           break;
-        case "number":
+        case 'number':
           item.remark = 0;
           this.hideMyBlock[index] = false;
           break;
-        case "boolean":
+        case 'boolean':
           item.remark = true;
           this.hideMyBlock[index] = false;
           break;
-        case "null":
+        case 'null':
           item.remark = null;
           this.hideMyBlock[index] = false;
           break;
@@ -219,9 +188,8 @@ export default {
           break;
       }
     },
-
     changeInputNumber(item) {
-      if (item.remark !== "") {
+      if (item.remark !== '') {
         item.remark = item.remark ?? 0;
       } else {
         item.remark = 0;
