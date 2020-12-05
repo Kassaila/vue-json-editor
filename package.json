@@ -25,7 +25,7 @@
   },
   "license": "Apache-2.0",
   "scripts": {
-    "format": "npx prettier --write 'src/**/*'",
+    "format": "npx prettier 'src/**/*' --write --ignore-unknown",
     "precise-commits": "npx precise-commits",
     "precommit": "npm run precise-commits",
     "dev": "webpack-dev-server --open --config webpack.config.js",

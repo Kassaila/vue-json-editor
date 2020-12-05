@@ -10,7 +10,7 @@ config.entry = './example/main.js';
 config.output = {
   path: path.resolve(__dirname, './example/dist/'),
   publicPath: '',
-  filename: '[name]_[hash].js',
+  filename: '[name]_[hash].js'
 };
 
 config.devtool = 'inline-source-map';
@@ -23,6 +23,6 @@ config.plugins = config.plugins.concat([
   new HtmlWebpackPlugin({
     template: './example/index.html'
   })
-])
+]);
 
-module.exports = config
+module.exports = config;

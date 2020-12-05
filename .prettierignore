@@ -4,26 +4,26 @@
 
 # IDE config
 /src/.idea
-/src/Homestead.json
-/src/Homestead.yaml
-/src/_ide_helper.php
-/src/.phpstorm.meta.php
+/Homestead.json
+/Homestead.yaml
+/_ide_helper.php
+/.phpstorm.meta.php
 /.idea
 /nbproject
 /.buildpath
 /.project
 /.settings
 /jsconfig.json
+/.git/
 
 # vendor
-vendor
-node_modules
+/vendor/
+/node_modules/
 *.hot-update.json
 *.hot-update.js
 composer.phar
 composer.lock
-/src/node_modules
-/src/vendor
+/example/node_modules
 
 # caches
 Thumbs.db
