@@ -28,9 +28,8 @@
     "format": "npx prettier 'src/**/*' --write --ignore-unknown",
     "precise-commits": "npx precise-commits",
     "precommit": "npm run precise-commits",
-    "dev": "webpack-dev-server --open --config webpack.config.js",
-    "example": "rm -rf ./example/dist/*.js && rm -rf ./example/dist/*.html && webpack --progress --config webpack.config.js",
-    "build": "webpack --progress --config webpack.build.js"
+    "dev": "webpack --watch --config webpack.dev.js",
+    "build": "webpack --progress --config webpack.prod.js"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -43,23 +42,21 @@
     "@babel/runtime": "^7.12.5",
     "babel-loader": "^8.2.2",
     "css-loader": "^2.1.0",
-    "html-webpack-plugin": "^3.2.0",
     "husky": "^4.3.0",
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
     "precise-commits": "^1.0.2",
     "prettier": "^2.2.1",
-    "resolve-url-loader": "^3.0.1",
     "style-loader": "^0.23.1",
-    "url-loader": "^1.1.2",
     "vue-loader": "^15.9.5",
     "vue-template-compiler": "^2.6.12",
     "webpack": "^4.29.6",
-    "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.11.0"
+    "webpack-cli": "^3.3.11"
+  },
+  "peerDependencies": {
+    "vue": "^2.6.12"
   },
   "dependencies": {
-    "vue": "^2.6.12",
     "vuedraggable": "^2.24.3"
   }
 }
