@@ -5,7 +5,7 @@ const config = base;
 config.mode = 'development';
 config.watch = false;
 config.watchOptions = {
-  ignored: ['example/**/*', 'node_modules']
+  ignored: ['example/**/*', 'node_modules'],
 };
 
 module.exports = config;
