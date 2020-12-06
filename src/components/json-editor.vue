@@ -11,15 +11,16 @@ import ObjectView from './object-view.vue';
 export default {
   name: 'JsonEditor',
   components: {
-    'object-view': ObjectView,
+    ObjectView,
   },
   props: {
-    dataObject: {
+    dataInput: {
       type: Object | Array,
       required: true,
     },
     options: {
       type: Object,
+      required: false,
       default() {
         return {
           confirmText: 'confirm',
@@ -41,9 +42,9 @@ export default {
     };
   },
   watch: {
-    dataObject: {
+    dataInput: {
       handler() {
-        this.currentData = this.parseJson(this.dataObject);
+        this.currentData = this.parseJson(this.dataInput);
       },
     },
     currentData: {
@@ -55,12 +56,12 @@ export default {
 
         this.cachedData = JSON.parse(newDataStr);
 
-        this.$emit('input', this.buildJson(this.currentData));
+        this.$emit('data-output', this.buildJson(this.currentData));
       },
     },
   },
   methods: {
-    parseJson(dataObject) {
+    parseJson(dataInput) {
       const parseItem = (key, value, type) => {
         const item = {
           name: type === 'object' ? key : null,
@@ -90,7 +91,7 @@ export default {
         return Object.entries(object).map(([key, value]) => parseItem(key, value, type));
       };
 
-      return parseObject(dataObject, this.rootType);
+      return parseObject(dataInput, this.rootType);
     },
 
     getType(object) {
@@ -150,12 +151,12 @@ export default {
   },
   computed: {
     rootType() {
-      return this.getType(this.dataObject);
+      return this.getType(this.dataInput);
     },
   },
   mounted() {
-    this.currentData = this.parseJson(this.dataObject);
-    this.$emit('input', this.buildJson(this.currentData));
+    this.currentData = this.parseJson(this.dataInput);
+    this.$emit('data-output', this.buildJson(this.currentData));
   },
 };
 </script>

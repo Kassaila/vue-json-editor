@@ -5,30 +5,32 @@
       <div class="json-editor">
         <json-editor
           :options="{
-            confirmText: 'confirm',
-            cancelText: 'cancel',
+            confirmText: 'Add',
+            cancelText: 'Cancel',
           }"
-          :data-object="jsonData"
-          v-model="jsonData"
+          :data-input="dataInput"
+          @data-output="(data) => (dataOutput = data)"
         ></json-editor>
       </div>
       <div class="json-output">
-        <vue-json-pretty :data="jsonData"> </vue-json-pretty>
+        <vue-json-pretty :data="dataOutput"> </vue-json-pretty>
       </div>
     </div>
   </div>
 </template>
 <script>
+import JsonEditor from '../../dist/vue-json-editor';
 import VueJsonPretty from 'vue-json-pretty';
 
 export default {
   name: 'app',
   components: {
+    JsonEditor,
     VueJsonPretty,
   },
   data() {
     return {
-      jsonData: {
+      dataInput: {
         name: 'Taras',
         age: 28,
         address: [
@@ -40,10 +42,11 @@ export default {
         ohters: {
           id: 1246,
           time: new Date(),
-          description: 'last example update',
+          description: 'last example run',
           pattern: /abc/g,
         },
       },
+      dataOutput: {},
     };
   },
 };

@@ -1,5 +1,78 @@
-select {
-  cursor: pointer;
+.json-editor {
+  select {
+    cursor: pointer;
+  }
+  &__btn {
+    --btn-size: 1em;
+    padding: 0;
+    font-size: var(--btn-size);
+    line-height: 1;
+    text-align: center;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    outline: none;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+    &:hover {
+      opacity: 0.7;
+    }
+    .btn-icon {
+      --btn-color: black;
+      --btn-border-color: black;
+      width: 1em;
+      display: block;
+      border: 1px solid var(--btn-border-color);
+      border-radius: 3px;
+      transition: color 0.2s ease, border-color 0.2s ease;
+      &:hover {
+        color: var(--btn-color);
+        border-color: var(--btn-border-color);
+      }
+    }
+    &_add {
+      .btn-icon {
+        &:hover {
+          --btn-color: green;
+          --btn-border-color: var(--btn-color);
+        }
+      }
+    }
+    &_delete {
+      .btn-icon {
+        &:hover {
+          --btn-color: red;
+          --btn-border-color: var(--btn-color);
+        }
+      }
+    }
+    &_drag {
+      cursor: move;
+      .btn-icon {
+        &:hover {
+          --btn-color: blue;
+          --btn-border-color: var(--btn-color);
+        }
+      }
+    }
+    &_collapse {
+      .btn-icon {
+        --btn-border-color: transparent;
+        font-weight: 700;
+        transform: rotateX(0deg);
+        transition: transform 0.2s ease;
+        &:hover {
+          --btn-color: grey;
+        }
+      }
+      &[data-collapsed='true'] {
+        .btn-icon {
+          transform: rotateX(180deg);
+        }
+      }
+    }
+  }
 }
 .add-new-item {
   --size: 1em;
@@ -20,10 +93,10 @@ select {
 .new-item-form {
   display: block;
   margin-bottom: 20px;
-  &__inputs-group {
+  &__inputs-group,
+  &__btns-group {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
     & > *:not(:last-child) {
       margin-right: 5px;
     }
@@ -37,11 +110,7 @@ select {
     }
   }
   &__btns-group {
-    display: flex;
-    align-items: center;
     justify-content: flex-end;
-    & > *:not(:last-child) {
-      margin-right: 5px;
-    }
+    margin-top: 10px;
   }
 }
