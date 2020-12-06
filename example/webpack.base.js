@@ -7,7 +7,7 @@ const config = {};
 
 config.entry = './src/main.js';
 config.output = {
-  path: path.resolve(__dirname, './dist/'),
+  path: path.resolve(__dirname, '../docs/'),
   publicPath: '',
   filename: '[name]_[hash].js',
 };

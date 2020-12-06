@@ -13,7 +13,7 @@
         ></json-editor>
       </div>
       <div class="code">
-        <code class="json">{{ codeJson }}</code>
+        <code>{{ codeJson }}</code>
       </div>
     </div>
   </div>

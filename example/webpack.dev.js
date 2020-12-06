@@ -11,7 +11,7 @@ config.watchOptions = {
 config.devtool = 'inline-source-map';
 
 config.devServer = {
-  contentBase: './dist',
+  contentBase: '../docs',
   port: 9000,
 };
 
