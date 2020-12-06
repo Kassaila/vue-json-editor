@@ -5,7 +5,6 @@
     v-model="currentData"
   ></object-view>
 </template>
-
 <script>
 import ObjectView from './object-view.vue';
 
@@ -160,7 +159,6 @@ export default {
   },
 };
 </script>
-
-<style lang="less">
-@import './styles/common.less';
+<style lang="scss">
+@import '../styles/common.scss';
 </style>

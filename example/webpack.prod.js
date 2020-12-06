@@ -7,5 +7,6 @@ config.watch = false;
 config.optimization = {
   minimize: true,
 };
+config.devtool = 'none';
 
 module.exports = config;

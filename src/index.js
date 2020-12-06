@@ -1,5 +1,5 @@
-import JsonEditor from './json-editor.vue';
-import ObjectView from './object-view.vue';
+import JsonEditor from './components/json-editor.vue';
+import ObjectView from './components/object-view.vue';
 import PackageFile from '../package.json';
 
 const VERSION = PackageFile.version;
