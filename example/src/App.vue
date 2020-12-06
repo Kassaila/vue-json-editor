@@ -5,8 +5,8 @@
       <div class="json-editor">
         <json-editor
           :options="{
-            confirmText: 'confirm',
-            cancelText: 'cancel',
+            confirmText: 'Add',
+            cancelText: 'Cancel',
           }"
           :data-object="jsonData"
           v-model="jsonData"
@@ -19,11 +19,13 @@
   </div>
 </template>
 <script>
+import JsonEditor from '../../dist/vue-json-editor';
 import VueJsonPretty from 'vue-json-pretty';
 
 export default {
   name: 'app',
   components: {
+    JsonEditor,
     VueJsonPretty,
   },
   data() {

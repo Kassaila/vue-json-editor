@@ -7,9 +7,11 @@
     "email": "kasela.kassaila@gmail.com"
   },
   "keywords": [
-    "visual editor",
     "vue",
-    "json"
+    "json",
+    "edit",
+    "editor",
+    "vue-component"
   ],
   "main": "./dist/vue-json-editor.js",
   "files": [
@@ -48,13 +50,11 @@
     "sass": "^1.30.0",
     "sass-loader": "^10.1.0",
     "style-loader": "^2.0.0",
+    "vue": "^2.6.12",
     "vue-loader": "^15.9.5",
     "vue-template-compiler": "^2.6.12",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.11"
-  },
-  "peerDependencies": {
-    "vue": "^2.6.12"
   },
   "dependencies": {
     "vuedraggable": "^2.24.3"

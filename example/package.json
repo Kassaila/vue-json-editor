@@ -8,9 +8,11 @@
   },
   "keywords": [
     "example",
-    "visual editor",
     "vue",
-    "json"
+    "json",
+    "edit",
+    "editor",
+    "vue-component"
   ],
   "repository": {
     "type": "git",
