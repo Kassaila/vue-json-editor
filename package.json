@@ -53,8 +53,8 @@
     "vue": "^2.6.12",
     "vue-loader": "^15.9.5",
     "vue-template-compiler": "^2.6.12",
-    "webpack": "^4.29.6",
-    "webpack-cli": "^3.3.11"
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12"
   },
   "dependencies": {
     "vuedraggable": "^2.24.3"
