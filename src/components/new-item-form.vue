@@ -107,7 +107,8 @@ export default {
           this.item.value = Number(this.item.value);
           break;
         case 'boolean':
-          this.item.value = Boolean(this.item.value);
+          this.item.value = this.item.value === 'true' ? true : false;
+          break;
         default:
           break;
       }
