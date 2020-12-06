@@ -39,14 +39,7 @@ ul {
   }
 }
 .dragbar {
-  position: absolute;
-  top: 0;
-  right: 20px;
-  bottom: 0;
-  width: 5px;
-  font-size: 18px;
-  margin-right: 15px;
-  cursor: pointer;
+  cursor: move;
 }
 .des {
   position: absolute;
