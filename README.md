@@ -44,7 +44,7 @@ Single file component
                 ],
                 others: {
                   id: 1246,
-                  time: new Date(),
+                  time: new Date()
                   description: 'last example run',
                   pattern: /abc/g,
                 },
@@ -60,10 +60,12 @@ Single file component
 
 | Name | Options | Type | Required | Description |
 | --- | --- | --- | --- | --- |
-| `data-input` | `props` | `Object | Array` | `true` | Input data |
+| `data-input` | `props` | `Object` or `Array` | `true` | Input data |
 | `options` | `props` | `Object` | `false` | Reserved (now empty) |
-| `data-output` | `event` | `Object | Array` | - | Output data |
+| `data-output` | `event` | `Object` or `Array` | - | Output data, return modified data |
 | `icon-add` | `slot` | `<template>` | `false` | Icon for button - add new item |
 | `icon-delete` | `slot` | `<template>` | `false` | Icon for button - delete item |
 | `icon-drag` | `slot` | `<template>` | `false` | Icon for dragbar |
 | `icon-collapse` | `slot` | `<template>` | `false` | Icon for button - collapse object list |
+
+For for some types of the data, like `Date`, `RegExp`, `Function` will be applied transformation to `string` (by the method `.toString()`)
