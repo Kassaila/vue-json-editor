@@ -2,10 +2,6 @@
   "name": "example",
   "version": "0.1.0",
   "description": "Example for JSON visual editor",
-  "author": {
-    "name": "Dmytro Symonov",
-    "email": "kasela.kassaila@gmail.com"
-  },
   "keywords": [
     "example",
     "vue",
@@ -14,15 +10,22 @@
     "editor",
     "vue-component"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Kassaila/vue-json-editor.git"
-  },
   "homepage": "https://github.com/Kassaila/vue-json-editor",
   "bugs": {
     "url": "https://github.com/Kassaila/vue-json-editor/issues"
   },
   "license": "Apache-2.0",
+  "author": {
+    "name": "Dmytro Symonov",
+    "email": "kasela.kassaila@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kassaila/vue-json-editor.git"
+  },
+  "engines": {
+    "node": ">=10.0.0"
+  },
   "scripts": {
     "dev": "webpack-dev-server --open --config webpack.dev.js",
     "build": "webpack --progress --config webpack.prod.js"

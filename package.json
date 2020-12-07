@@ -1,11 +1,7 @@
 {
-  "name": "vue-json-editor",
+  "name": "@kassaila/vue-json-editor",
   "version": "0.1.0",
   "description": "JSON visual editor - built as a Vue.js component",
-  "author": {
-    "name": "Dmytro Symonov",
-    "email": "kasela.kassaila@gmail.com"
-  },
   "keywords": [
     "vue",
     "json",
@@ -13,6 +9,15 @@
     "editor",
     "vue-component"
   ],
+  "homepage": "https://github.com/Kassaila/vue-json-editor",
+  "bugs": {
+    "url": "https://github.com/Kassaila/vue-json-editor/issues"
+  },
+  "license": "Apache-2.0",
+  "author": {
+    "name": "Dmytro Symonov",
+    "email": "kasela.kassaila@gmail.com"
+  },
   "main": "./dist/vue-json-editor.js",
   "files": [
     "dist"
@@ -21,11 +26,13 @@
     "type": "git",
     "url": "git+https://github.com/Kassaila/vue-json-editor.git"
   },
-  "homepage": "https://github.com/Kassaila/vue-json-editor",
-  "bugs": {
-    "url": "https://github.com/Kassaila/vue-json-editor/issues"
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://npm.pkg.github.com/"
   },
-  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=10.0.0"
+  },
   "scripts": {
     "format": "npx prettier 'src/**/*' --write --ignore-unknown",
     "precise-commits": "npx precise-commits",
