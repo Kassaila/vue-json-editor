@@ -66,7 +66,11 @@
               class="json-editor__input value__input"
               @input="changeInputNumber(item)"
             />
-            <select v-if="item.type === 'boolean'" v-model="item.remark" class="json-editor__input value__input">
+            <select
+              v-if="item.type === 'boolean'"
+              v-model="item.remark"
+              class="json-editor__input value__input"
+            >
               <option :value="true">true</option>
               <option :value="false">false</option>
             </select>

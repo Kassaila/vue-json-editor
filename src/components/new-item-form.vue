@@ -10,7 +10,9 @@
         @change="checkKey"
       />
       <template v-if="item.type !== 'array' && item.type !== 'object'">
-        <span v-if="item.type === 'null'" class="json-editor__input new-item-form__input">null</span>
+        <span v-if="item.type === 'null'" class="json-editor__input new-item-form__input"
+          >null</span
+        >
         <input
           v-if="item.type === 'string'"
           v-model.trim="item.value"
@@ -25,7 +27,11 @@
           placeholder="value"
           class="json-editor__input new-item-form__input"
         />
-        <select v-if="item.type === 'boolean'" v-model="item.value" class="json-editor__input new-item-form__input">
+        <select
+          v-if="item.type === 'boolean'"
+          v-model="item.value"
+          class="json-editor__input new-item-form__input"
+        >
           <option value="true">true</option>
           <option value="false">false</option>
         </select>
