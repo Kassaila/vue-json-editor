@@ -64,7 +64,7 @@ export default {
       default: true,
     },
   },
-  inject: ['typesList', 'formBtnText'],
+  inject: ['typesList'],
   data() {
     return {
       item: {
