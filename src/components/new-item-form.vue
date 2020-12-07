@@ -3,7 +3,7 @@
     <div class="new-item-form__group">
       <input
         v-if="requiredKey"
-        v-model="item.key"
+        v-model.trim="item.key"
         type="text"
         :placeholder="keyPlaceholder"
         class="json-editor__input new-item-form__input"
@@ -30,7 +30,7 @@
         <select
           v-if="item.type === 'boolean'"
           v-model="item.value"
-          class="json-editor__input new-item-form__input"
+          class="json-editor__select new-item-form__input"
         >
           <option value="true">true</option>
           <option value="false">false</option>

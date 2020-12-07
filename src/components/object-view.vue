@@ -37,11 +37,11 @@
           </button>
           <input
             v-if="item.name !== null"
-            v-model="item.name"
+            v-model.trim="item.name"
             type="text"
-            placeholder="cannot be empty"
+            :placeholder="placeholderKey"
             class="json-editor__input key__input"
-            @blur="blurKeyInput(item, $event)"
+            @blur="checkKeyInput(item, $event)"
           />
           <i v-else>{{ index }}. </i>
         </div>
@@ -70,7 +70,7 @@
             <span v-if="item.type === 'null'" class="json-editor__input value__input">null</span>
             <input
               v-if="item.type === 'string'"
-              v-model="item.remark"
+              v-model.trim="item.remark"
               type="text"
               class="json-editor__input value__input"
             />
@@ -165,6 +165,7 @@ export default {
       currentData: this.parsedData ?? [],
       itemForm: false,
       collapsedList: {},
+      placeholderKey: 'key',
     };
   },
   watch: {
@@ -211,8 +212,13 @@ export default {
       this.$emit('input', this.currentData);
       this.toggleItemForm();
     },
-    blurKeyInput(item, e) {
+    checkKeyInput(item, e) {
       if (item.name.length === 0) {
+        this.placeholderKey = 'cannot be empty';
+        e.target.focus();
+      } else if (!isNaN(Number(item.name[0]))) {
+        item.name = '';
+        this.placeholderKey = 'not correct key';
         e.target.focus();
       }
     },
