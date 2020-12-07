@@ -9,7 +9,7 @@
     padding: 3px 6px;
     border: 1px solid transparent;
     border-radius: 3px;
-    font-size: 1em;
+    font-size: 14px;
     line-height: 1;
     text-overflow: ellipsis;
     background-color: transparent;
@@ -38,7 +38,7 @@
     outline: none;
     cursor: pointer;
     &_icon {
-      --btn-size: 1em;
+      --btn-size: 14px;
       padding: 0;
       font-size: var(--btn-size);
       text-align: center;
@@ -50,7 +50,7 @@
   .btn-icon {
     --btn-color: black;
     --btn-border-color: black;
-    width: 1.2em;
+    width: 16px;
     display: inline-block;
     border: 1px solid var(--btn-border-color);
     border-radius: 3px;
@@ -133,7 +133,7 @@
       margin-right: 5px;
     }
     &__container {
-      margin-left: 2em;
+      margin-left: 16px;
     }
     &__key {
       flex-shrink: 0;
