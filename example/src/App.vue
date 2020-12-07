@@ -61,11 +61,14 @@ export default {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 40px;
+  align-items: flex-start;
   padding: 30px;
 }
-.json-output {
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 1px 3px 10px rgba(0, 0, 0, 0.25);
+.json {
+  &-output {
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 1px 3px 10px rgba(0, 0, 0, 0.25);
+  }
 }
 </style>
