@@ -1,10 +1,12 @@
 # vue-json-editor
 
-JSON visual editor - built as a Vue.js component. Provides a basic GUI
+> JSON visual editor - built as a Vue.js component. Provides a basic GUI
 
-## Please preview - [demo example](https://kassaila.github.io/vue-json-editor/)
+Please preview - [demo example](https://kassaila.github.io/vue-json-editor/)
 
-## Getting Started
+## Install
+
+Install package from `npm`:
 
 ```
 npm i @kassaila/vue-json-editor
@@ -12,49 +14,56 @@ npm i @kassaila/vue-json-editor
 
 ## Usage
 
-```javascript
-import Vue from 'vue';
-import JsonEditor from 'vue-json-editor';
-
-Vue.use(JsonEditor);
-```
-
-### Props
-
-- `obj-data` - json data
-- `options`
-  - `confirmText` - strings of the confirm button
-  - `cancelText` - strings of the cancel button
-
-## Example
-
 Single file component
 
 ```html
 <template>
   <json-editor
-    :options="{
-            confirmText: 'confirm',
-            cancelText: 'cancel',
-        }"
-    :obj-data="jsonData"
-    v-model="jsonData"
-  >
+  :data-input="dataInput"
+  @data-output="(data) => (dataOutput = data)">
   </json-editor>
 </template>
 <script>
+  import JsonEditor from '@kassaila/vue-json-editor';
+
   export default {
       ...
+      components: {
+        JsonEditor,
+      },
       data() {
           return {
-              jsonData: {
-                  name: 'mike',
-                  age: 23,
-                  phone: '18552129932',
-                  address: ['AAA C1', 'BBB C2']
-              }
-          }
-      }
+              dataInput: {
+                name: 'Taras',
+                age: 28,
+                address: [
+                  'Ukraine',
+                  {
+                    city: 'Kharkiv',
+                  },
+                ],
+                others: {
+                  id: 1246,
+                  time: new Date(),
+                  description: 'last example run',
+                  pattern: /abc/g,
+                },
+              },
+              dataOutput: {},
+          };
+      },
   }
 </script>
 ```
+
+## Capability
+
+| Name | Options | Type | Required | Description |
+| --- | --- | --- | --- | --- |
+| `data-input` | `props` | `Object | Array` | `true` | Input data |
+| `options` | `props` | `Object` | `false` | Reserved (now empty) |
+| `data-output` | `event` | `Object | Array` | - | Output data |
+| `icon-add` | `slot` | `<template>` | `false` | Icon for button - add new item |
+| `icon-delete` | `slot` | `<template>` | `false` | Icon for button - delete item |
+| `icon-drag` | `slot` | `<template>` | `false` | Icon for dragbar |
+| `icon-collapse` | `slot` | `<template>` | `false` | Icon for button - collapse object list |

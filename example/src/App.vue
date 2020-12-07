@@ -4,10 +4,6 @@
     <div class="container">
       <div class="json-editor">
         <json-editor
-          :options="{
-            confirmText: 'Add',
-            cancelText: 'Cancel',
-          }"
           :data-input="dataInput"
           @data-output="(data) => (dataOutput = data)"
         ></json-editor>
@@ -39,7 +35,7 @@ export default {
             city: 'Kharkiv',
           },
         ],
-        ohters: {
+        others: {
           id: 1246,
           time: new Date(),
           description: 'last example run',
