@@ -3,6 +3,7 @@
 }
 .json-editor {
   &__input {
+    flex-grow: 1;
     display: block;
     min-width: 0;
     padding: 3px 6px;
@@ -97,7 +98,7 @@
     position: relative;
     display: flex;
     flex-wrap: wrap;
-    align-items: flex-start;
+    align-items: center;
     padding-bottom: 4px;
     margin-bottom: 4px;
     border-bottom: 1px dashed transparent;
@@ -108,6 +109,9 @@
       }
     }
     &_list {
+      padding-right: 4px;
+      border-right: 1px dashed grey;
+      border-radius: 4px;
       & > .object-view__key {
         flex-grow: 1;
         display: flex;
