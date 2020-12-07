@@ -1,35 +1,49 @@
 <template>
-  <div class="block_content">
-    <draggable v-model="currentData" handle="[data-dragbar]" @end="dragEnd">
+  <div class="object-view__container">
+    <draggable
+      v-model="currentData"
+      class="object-view__drag"
+      handle="[data-dragbar]"
+      @end="dragEnd"
+    >
       <div
         v-for="(item, index) in currentData"
         :key="`${item.type}-${index}`"
-        class="block"
-        :class="{ 'hide-block': hidenBlocks[index] }"
+        class="object-view"
+        :class="{
+          'object-view_collapsed': collapsedList[index],
+          'object-view_list': item.type === 'object' || item.type === 'array',
+        }"
       >
-        <span class="json-key">
+        <div class="object-view__key">
           <button
             v-if="item.type === 'object' || item.type === 'array'"
             type="button"
-            class="json-editor__btn json-editor__btn_collapse"
-            :data-collapsed="hidenBlocks[index]"
+            class="json-editor__btn json-editor__btn_icon"
+            :data-collapsed="collapsedList[index]"
             @click="toggleBlock(index)"
           >
-            <span class="btn-icon" :title="hidenBlocks[index] ? 'Expand' : 'Collapse'">^</span>
+            <b>
+              <span
+                class="btn-icon btn-icon_collapse"
+                :title="collapsedList[index] ? 'Expand' : 'Collapse'"
+                >^</span
+              >
+              <i v-if="item.type === 'object'">{{ `{ ${item.childParams.length} }` }}</i>
+              <i v-if="item.type === 'array'">{{ `[ ${item.childParams.length} ]` }}</i>
+            </b>
           </button>
-          <i v-if="item.type === 'object'">{{ `{ ${item.childParams.length} }` }}</i>
-          <i v-if="item.type === 'array'">{{ `[ ${item.childParams.length} ]` }}</i>
           <input
             v-if="item.name !== null"
             v-model="item.name"
             type="text"
             placeholder="cannot be empty"
-            class="key-input"
+            class="json-editor__input key__input"
             @blur="blurKeyInput(item, $event)"
           />
           <i v-else>{{ index }}. </i>
-        </span>
-        <span class="json-val">
+        </div>
+        <div class="object-view__value">
           <template v-if="item.type === 'object' || item.type === 'array'">
             <object-view
               :object-type="item.type"
@@ -38,44 +52,49 @@
             ></object-view>
           </template>
           <template v-else>
-            <span class="val">
-              <span v-if="item.type === 'null'" class="val-input">null</span>
-              <input
-                v-if="item.type === 'string'"
-                v-model="item.remark"
-                type="text"
-                class="val-input"
-              />
-              <input
-                v-if="item.type === 'number'"
-                v-model.number="item.remark"
-                type="number"
-                class="val-input"
-                @input="changeInputNumber(item)"
-              />
-              <select v-if="item.type === 'boolean'" v-model="item.remark" class="val-input">
-                <option :value="true">true</option>
-                <option :value="false">false</option>
-              </select>
-            </span>
+            <span v-if="item.type === 'null'" class="json-editor__input value__input">null</span>
+            <input
+              v-if="item.type === 'string'"
+              v-model="item.remark"
+              type="text"
+              class="json-editor__input value__input"
+            />
+            <input
+              v-if="item.type === 'number'"
+              v-model.number="item.remark"
+              type="number"
+              class="json-editor__input value__input"
+              @input="changeInputNumber(item)"
+            />
+            <select
+              v-if="item.type === 'boolean'"
+              v-model="item.remark"
+              class="json-editor__input value__input"
+            >
+              <option :value="true">true</option>
+              <option :value="false">false</option>
+            </select>
           </template>
-        </span>
-
-        <div class="tools">
-          <select v-model="item.type" class="tools-types" @change="changeItemType(item, index)">
+        </div>
+        <div class="object-view__tools">
+          <select
+            v-model="item.type"
+            class="json-editor__select"
+            @change="changeItemType(item, index)"
+          >
             <option v-for="(type, index) in typesList" :value="type" :key="index">
               {{ type }}
             </option>
           </select>
-          <button type="button" class="json-editor__btn json-editor__btn_drag" data-dragbar>
-            <span class="btn-icon" title="Move">=</span>
+          <button type="button" class="json-editor__btn json-editor__btn_icon" data-dragbar>
+            <span class="btn-icon btn-icon_drag" title="Move">=</span>
           </button>
           <button
             type="button"
-            class="json-editor__btn json-editor__btn_delete"
+            class="json-editor__btn json-editor__btn_icon"
             @click="deleteItem(parsedData, item, index)"
           >
-            <span class="btn-icon" title="Delete">-</span>
+            <span class="btn-icon btn-icon_delete" title="Delete">-</span>
           </button>
         </div>
       </div>
@@ -85,16 +104,16 @@
       v-if="itemForm"
       @add-new-item="createItem"
       @cancel-new-item="toggleItemForm"
-      :requiredKey="objectType !== 'array'"
+      :required-key="objectType !== 'array'"
     ></new-item-form>
 
     <button
       v-if="!itemForm"
       type="button"
-      class="json-editor__btn json-editor__btn_add"
+      class="json-editor__btn json-editor__btn_icon"
       @click="toggleItemForm"
     >
-      <span class="btn-icon" title="Add">+</span>
+      <span class="btn-icon btn-icon_add" title="Add">+</span>
     </button>
   </div>
 </template>
@@ -124,7 +143,7 @@ export default {
     return {
       currentData: this.parsedData ?? [],
       itemForm: false,
-      hidenBlocks: {},
+      collapsedList: {},
     };
   },
   watch: {
@@ -137,12 +156,12 @@ export default {
   methods: {
     deleteItem(parentDom, item, index) {
       this.currentData.splice(index, 1);
-      if (this.hidenBlocks[index]) this.hidenBlocks[index] = false;
+      if (this.collapsedList[index]) this.collapsedList[index] = false;
       this.$emit('input', this.currentData);
     },
 
     toggleBlock(index) {
-      this.$set(this.hidenBlocks, index, this.hidenBlocks[index] ? false : true);
+      this.$set(this.collapsedList, index, this.collapsedList[index] ? false : true);
     },
 
     toggleItemForm() {
@@ -188,19 +207,19 @@ export default {
           break;
         case 'string':
           item.remark = '';
-          this.hidenBlocks[index] = false;
+          this.collapsedList[index] = false;
           break;
         case 'number':
           item.remark = 0;
-          this.hidenBlocks[index] = false;
+          this.collapsedList[index] = false;
           break;
         case 'boolean':
           item.remark = true;
-          this.hidenBlocks[index] = false;
+          this.collapsedList[index] = false;
           break;
         case 'null':
           item.remark = null;
-          this.hidenBlocks[index] = false;
+          this.collapsedList[index] = false;
           break;
         default:
           break;
