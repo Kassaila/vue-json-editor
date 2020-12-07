@@ -1,6 +1,11 @@
 <template>
   <div class="wrapper">
     <h1 class="page-title">Vue JSON visual editor</h1>
+    <p class="page-text">
+      JSON visual editor - built as a Vue.js component.<br />This demo used
+      <a href="https://github.com/leezng/vue-json-pretty">vue-json-pretty</a> for highlighting JSON
+      syntax.
+    </p>
     <div class="container">
       <div class="json-editor">
         <json-editor
@@ -51,6 +56,13 @@ export default {
 @import 'vue-json-pretty/lib/styles.css';
 
 .page-title {
+  margin-top: 32px;
+  text-align: center;
+}
+.page-text {
+  padding: 30px;
+  font-size: 16px;
+  line-height: 1.2;
   text-align: center;
 }
 .container {

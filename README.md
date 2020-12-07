@@ -69,3 +69,5 @@ Single file component
 | `icon-collapse` | `slot` | `<template>` | `false` | Icon for button - collapse object list |
 
 For for some types of the data, like `Date`, `RegExp`, `Function` will be applied transformation to `string` (by the method `.toString()`)
+
+This is a modified version of the fork [vue-json-edit](https://github.com/jinkin1995/vue-json-edit)
