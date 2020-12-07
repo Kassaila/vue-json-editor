@@ -44,12 +44,8 @@
     </div>
 
     <div class="new-item-form__group new-item-form__group_btns">
-      <button type="submit" class="json-editor__btn">
-        {{ this.formBtnText.confirmText }}
-      </button>
-      <button type="button" class="json-editor__btn" @click="cancel">
-        {{ this.formBtnText.cancelText }}
-      </button>
+      <button type="submit" class="json-editor__btn">Add</button>
+      <button type="button" class="json-editor__btn" @click="cancel">Cancel</button>
     </div>
   </form>
 </template>
