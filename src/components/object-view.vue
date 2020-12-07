@@ -24,10 +24,12 @@
             @click="toggleBlock(index)"
           >
             <b>
-              <span
-                class="btn-icon btn-icon_collapse"
-                :title="collapsedList[index] ? 'Expand' : 'Collapse'"
-                >^</span
+              <slot name="icon-collapse"
+                ><span
+                  class="btn-icon btn-icon_collapse"
+                  :title="collapsedList[index] ? 'Expand' : 'Collapse'"
+                  >^</span
+                ></slot
               >
               <i v-if="item.type === 'object'">{{ `{ ${item.childParams.length} }` }}</i>
               <i v-if="item.type === 'array'">{{ `[ ${item.childParams.length} ]` }}</i>
@@ -49,7 +51,20 @@
               :object-type="item.type"
               :parsed-data="item.childParams"
               v-model="item.childParams"
-            ></object-view>
+            >
+              <template #icon-add>
+                <slot name="icon-add"> </slot>
+              </template>
+              <template #icon-delete>
+                <slot name="icon-delete"> </slot>
+              </template>
+              <template #icon-drag>
+                <slot name="icon-drag"> </slot>
+              </template>
+              <template #icon-collapse>
+                <slot name="icon-collapse"> </slot>
+              </template>
+            </object-view>
           </template>
           <template v-else>
             <span v-if="item.type === 'null'" class="json-editor__input value__input">null</span>
@@ -87,14 +102,18 @@
             </option>
           </select>
           <button type="button" class="json-editor__btn json-editor__btn_icon" data-dragbar>
-            <span class="btn-icon btn-icon_drag" title="Move">=</span>
+            <slot name="icon-drag">
+              <span class="btn-icon btn-icon_drag" title="Move">=</span>
+            </slot>
           </button>
           <button
             type="button"
             class="json-editor__btn json-editor__btn_icon"
             @click="deleteItem(parsedData, item, index)"
           >
-            <span class="btn-icon btn-icon_delete" title="Delete">-</span>
+            <slot name="icon-delete">
+              <span class="btn-icon btn-icon_delete" title="Delete">-</span>
+            </slot>
           </button>
         </div>
       </div>
@@ -113,7 +132,9 @@
       class="json-editor__btn json-editor__btn_icon"
       @click="toggleItemForm"
     >
-      <span class="btn-icon btn-icon_add" title="Add">+</span>
+      <slot name="icon-add">
+        <span class="btn-icon btn-icon_add" title="Add">+</span>
+      </slot>
     </button>
   </div>
 </template>

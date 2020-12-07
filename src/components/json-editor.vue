@@ -1,9 +1,18 @@
 <template>
-  <object-view
-    :object-type="rootType"
-    :parsed-data="currentData"
-    v-model="currentData"
-  ></object-view>
+  <object-view :object-type="rootType" :parsed-data="currentData" v-model="currentData">
+    <template #icon-add>
+      <slot name="icon-add"> </slot>
+    </template>
+    <template #icon-delete>
+      <slot name="icon-delete"> </slot>
+    </template>
+    <template #icon-drag>
+      <slot name="icon-drag"> </slot>
+    </template>
+    <template #icon-collapse>
+      <slot name="icon-collapse"> </slot>
+    </template>
+  </object-view>
 </template>
 <script>
 import ObjectView from './object-view.vue';
@@ -22,17 +31,14 @@ export default {
       type: Object,
       required: false,
       default() {
-        return {
-          confirmText: 'confirm',
-          cancelText: 'cancel',
-        };
+        return {};
       },
     },
   },
   provide() {
     return {
       typesList: ['object', 'array', 'string', 'number', 'boolean', 'null'],
-      formBtnText: this.options,
+      options: this.options,
     };
   },
   data() {
