@@ -3,6 +3,7 @@
 }
 .json-editor {
   &__input {
+    display: block;
     min-width: 0;
     padding: 3px 6px;
     border: 1px solid transparent;
@@ -20,6 +21,7 @@
   &__select {
     flex-shrink: 0;
     padding: 3px 6px;
+    margin-left: auto;
     border: 1px solid black;
     border-radius: 3px;
     box-shadow: none;
