@@ -55,6 +55,10 @@ export default {
 <style lang="scss">
 @import 'vue-json-pretty/lib/styles.css';
 
+* {
+  box-sizing: border-box;
+}
+
 .page-title {
   margin-top: 32px;
   text-align: center;

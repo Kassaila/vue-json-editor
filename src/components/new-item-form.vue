@@ -26,6 +26,7 @@
           type="number"
           placeholder="value"
           class="json-editor__input new-item-form__input"
+          step="0.1e-100"
         />
         <select
           v-if="item.type === 'boolean'"

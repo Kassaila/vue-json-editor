@@ -1,5 +1,10 @@
 <template>
-  <object-view :object-type="rootType" :parsed-data="currentData" v-model="currentData">
+  <object-view
+    v-model="currentData"
+    :object-type="rootType"
+    :parsed-data="currentData"
+    class="json-editor"
+  >
     <template #icon-add>
       <slot name="icon-add"> </slot>
     </template>

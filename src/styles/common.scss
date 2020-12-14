@@ -1,93 +1,96 @@
-* {
-  box-sizing: border-box;
-}
 .json-editor {
-  &__input {
-    flex-grow: 1;
+  &__input,
+  &__select,
+  &__btn {
+    line-height: 1;
+    background-color: white;
+    box-shadow: none;
+    outline: none;
+  }
+  &__input,
+  &__select {
     display: block;
     min-width: 0;
     padding: 3px 6px;
-    border: 1px solid transparent;
+    border-style: solid;
+    border-width: 1px;
     border-radius: 3px;
     font-size: 14px;
-    line-height: 1;
-    text-overflow: ellipsis;
-    background-color: transparent;
-    outline: none;
-    box-shadow: none;
     &:focus {
       border-color: green;
+    }
+  }
+  &__select,
+  &__btn {
+    cursor: pointer;
+  }
+  &__input {
+    flex-grow: 1;
+    border-color: transparent;
+    text-overflow: ellipsis;
+    appearance: textfield;
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
     }
   }
   &__select {
     flex-shrink: 0;
-    padding: 3px 6px;
     margin-left: auto;
-    border: 1px solid black;
-    border-radius: 3px;
-    box-shadow: none;
-    outline: none;
-    cursor: pointer;
-    &:focus {
-      border-color: green;
-    }
+    border-color: black;
   }
   &__btn {
-    line-height: 1;
-    box-shadow: none;
-    outline: none;
-    cursor: pointer;
     &_icon {
       --btn-size: 14px;
       padding: 0;
       font-size: var(--btn-size);
       text-align: center;
-      background-color: transparent;
       border: none;
       border-radius: 0;
     }
   }
   .btn-icon {
-    --btn-color: black;
-    --btn-border-color: black;
+    --btn-icon-color: black;
+    --btn-icon-border-color: black;
     width: 16px;
     display: inline-block;
-    border: 1px solid var(--btn-border-color);
+    border: 1px solid var(--btn-icon-border-color);
     border-radius: 3px;
     transition: color 0.2s ease, border-color 0.2s ease;
     &:hover {
-      color: var(--btn-color);
-      border-color: var(--btn-border-color);
+      color: var(--btn-icon-color);
+      border-color: var(--btn-icon-border-color);
     }
     &_add {
       &:hover {
-        --btn-color: green;
-        --btn-border-color: var(--btn-color);
+        --btn-icon-color: green;
+        --btn-icon-border-color: var(--btn-icon-color);
       }
     }
     &_delete {
       &:hover {
-        --btn-color: red;
-        --btn-border-color: var(--btn-color);
+        --btn-icon-color: red;
+        --btn-icon-border-color: var(--btn-icon-color);
       }
     }
     &_drag {
       cursor: move;
       &:hover {
-        --btn-color: blue;
-        --btn-border-color: var(--btn-color);
+        --btn-icon-color: blue;
+        --btn-icon-border-color: var(--btn-icon-color);
       }
     }
     &_collapse {
-      --btn-border-color: transparent;
+      --btn-icon-border-color: transparent;
       transform: rotateZ(180deg);
       transition: transform 0.2s ease;
       &:hover {
-        --btn-color: grey;
+        --btn-icon-color: grey;
       }
     }
   }
-  [data-collapsed='true'] {
+  [aria-expanded='false'] {
     .btn-icon {
       &_collapse {
         transform: rotateZ(90deg);
@@ -102,11 +105,8 @@
     padding-bottom: 4px;
     margin-bottom: 4px;
     border-bottom: 1px dashed transparent;
-    &_collapsed {
+    &--collapsed {
       border-color: grey;
-      .object-view__value {
-        display: none;
-      }
     }
     &_list {
       padding-right: 4px;
@@ -159,6 +159,10 @@
       &__input {
         width: 100%;
         color: green;
+        border-color: transparent;
+        &:focus {
+          border-color: green;
+        }
       }
     }
   }

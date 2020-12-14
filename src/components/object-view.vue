@@ -11,8 +11,8 @@
         :key="`${item.type}-${index}`"
         class="object-view"
         :class="{
-          'object-view_collapsed': collapsedList[index],
           'object-view_list': item.type === 'object' || item.type === 'array',
+          'object-view--collapsed': collapsedList[index],
         }"
       >
         <div class="object-view__key">
@@ -20,8 +20,9 @@
             v-if="item.type === 'object' || item.type === 'array'"
             type="button"
             class="json-editor__btn json-editor__btn_icon"
-            :data-collapsed="collapsedList[index]"
-            @click="toggleBlock(index)"
+            aria-controls="trigger"
+            :aria-expanded="!collapsedList[index] ? 'true' : 'false'"
+            @click="toggleItem(index)"
           >
             <b>
               <slot name="icon-collapse"
@@ -45,7 +46,7 @@
           />
           <i v-else>{{ index }}. </i>
         </div>
-        <div class="object-view__value">
+        <div class="object-view__value" v-show="!collapsedList[index]">
           <template v-if="item.type === 'object' || item.type === 'array'">
             <object-view
               :object-type="item.type"
@@ -79,12 +80,12 @@
               v-model.number="item.remark"
               type="number"
               class="json-editor__input value__input"
-              @input="changeInputNumber(item)"
+              step="0.1e-100"
             />
             <select
               v-if="item.type === 'boolean'"
               v-model="item.remark"
-              class="json-editor__input value__input"
+              class="json-editor__select value__input"
             >
               <option :value="true">true</option>
               <option :value="false">false</option>
@@ -182,7 +183,7 @@ export default {
       this.$emit('input', this.currentData);
     },
 
-    toggleBlock(index) {
+    toggleItem(index) {
       this.$set(this.collapsedList, index, this.collapsedList[index] ? false : true);
     },
 
@@ -250,13 +251,6 @@ export default {
           break;
         default:
           break;
-      }
-    },
-    changeInputNumber(item) {
-      if (item.remark !== '') {
-        item.remark = item.remark ?? 0;
-      } else {
-        item.remark = 0;
       }
     },
   },
