@@ -46,7 +46,9 @@
 
     <div class="new-item-form__group new-item-form__group_btns">
       <button type="submit" class="json-editor__btn new-item-form__btn">Add</button>
-      <button type="button" class="json-editor__btn new-item-form__btn" @click="cancel">Cancel</button>
+      <button type="button" class="json-editor__btn new-item-form__btn" @click="cancel">
+        Cancel
+      </button>
     </div>
   </form>
 </template>
