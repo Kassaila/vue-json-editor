@@ -162,7 +162,11 @@
     .value {
       &__input {
         width: 100%;
+        border-color: transparent;
         color: var(--color-accent);
+        &:focus {
+          border-color: var(--color-accent);
+        }
       }
     }
   }
