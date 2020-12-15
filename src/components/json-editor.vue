@@ -1,5 +1,5 @@
 <template>
-  <object-view
+  <item-view
     v-model="currentData"
     :object-type="rootType"
     :parsed-data="currentData"
@@ -17,15 +17,15 @@
     <template #icon-collapse>
       <slot name="icon-collapse"> </slot>
     </template>
-  </object-view>
+  </item-view>
 </template>
 <script>
-import ObjectView from './object-view.vue';
+import ItemView from './item-view.vue';
 
 export default {
   name: 'JsonEditor',
   components: {
-    ObjectView,
+    ItemView,
   },
   props: {
     dataInput: {

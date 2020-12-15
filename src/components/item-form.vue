@@ -5,9 +5,8 @@
         v-if="requiredKey"
         v-model.trim="item.key"
         type="text"
-        :placeholder="keyPlaceholder"
+        :placeholder="placeholderKey"
         class="json-editor__input new-item-form__input"
-        @change="checkKey"
       />
       <template v-if="item.type !== 'array' && item.type !== 'object'">
         <span v-if="item.type === 'null'" class="json-editor__input new-item-form__input"
@@ -33,8 +32,8 @@
           v-model="item.value"
           class="json-editor__select new-item-form__input"
         >
-          <option value="true">true</option>
-          <option value="false">false</option>
+          <option :value="true">true</option>
+          <option :value="false">false</option>
         </select>
       </template>
       <select v-once v-model="item.type" class="json-editor__select" @change="changeType">
@@ -55,7 +54,7 @@
 
 <script>
 export default {
-  name: 'NewItemForm',
+  name: 'ItemForm',
   props: {
     requiredKey: {
       type: Boolean,
@@ -71,18 +70,23 @@ export default {
         key: '',
         value: '',
       },
-      keyPlaceholder: 'key',
+      placeholderKey: 'key',
     };
   },
   methods: {
     checkKey() {
-      this.keyPlaceholder = this.item.key !== '' ? 'key' : 'cannot be empty';
-
       if (this.requiredKey) {
-        return this.item.key !== '';
-      } else {
+        if (this.item.key.length === 0) {
+          this.placeholderKey = 'cannot be empty';
+          return false;
+        } else if (!isNaN(Number(this.item.key[0]))) {
+          this.item.key = '';
+          this.placeholderKey = 'not correct key';
+          return false;
+        }
         return true;
       }
+      return true;
     },
     changeType() {
       switch (this.item.type) {
@@ -106,17 +110,6 @@ export default {
     },
     submit() {
       if (!this.checkKey()) return;
-
-      switch (this.item.type) {
-        case 'number':
-          this.item.value = Number(this.item.value);
-          break;
-        case 'boolean':
-          this.item.value = this.item.value === 'true' ? true : false;
-          break;
-        default:
-          break;
-      }
 
       this.$emit('add-new-item', this.item);
     },

@@ -22,7 +22,7 @@
             class="json-editor__btn json-editor__btn_icon"
             aria-controls="trigger"
             :aria-expanded="!collapsedList[index] ? 'true' : 'false'"
-            @click="toggleItem(index)"
+            @click="toggleList(index)"
           >
             <b>
               <slot name="icon-collapse"
@@ -42,13 +42,13 @@
             type="text"
             :placeholder="placeholderKey"
             class="json-editor__input key__input"
-            @blur="checkKeyInput(item, $event)"
+            @blur="checkKey(item, $event)"
           />
           <i v-else>{{ index }}. </i>
         </div>
         <div class="object-view__value" v-show="!collapsedList[index]">
           <template v-if="item.type === 'object' || item.type === 'array'">
-            <object-view
+            <item-view
               :object-type="item.type"
               :parsed-data="item.childParams"
               v-model="item.childParams"
@@ -65,7 +65,7 @@
               <template #icon-collapse>
                 <slot name="icon-collapse"> </slot>
               </template>
-            </object-view>
+            </item-view>
           </template>
           <template v-else>
             <span v-if="item.type === 'null'" class="json-editor__input value__input">null</span>
@@ -93,11 +93,7 @@
           </template>
         </div>
         <div class="object-view__tools">
-          <select
-            v-model="item.type"
-            class="json-editor__select"
-            @change="changeItemType(item, index)"
-          >
+          <select v-model="item.type" class="json-editor__select" @change="changeType(item, index)">
             <option v-for="(type, index) in typesList" :value="type" :key="index">
               {{ type }}
             </option>
@@ -120,18 +116,18 @@
       </div>
     </draggable>
 
-    <new-item-form
+    <item-form
       v-if="itemForm"
       @add-new-item="createItem"
-      @cancel-new-item="toggleItemForm"
+      @cancel-new-item="toggleForm"
       :required-key="objectType !== 'array'"
-    ></new-item-form>
+    ></item-form>
 
     <button
       v-if="!itemForm"
       type="button"
       class="json-editor__btn json-editor__btn_icon"
-      @click="toggleItemForm"
+      @click="toggleForm"
     >
       <slot name="icon-add">
         <span class="btn-icon btn-icon_add" title="Add">+</span>
@@ -142,13 +138,13 @@
 
 <script>
 import draggable from 'vuedraggable';
-import NewItemForm from './new-item-form.vue';
+import ItemForm from './item-form.vue';
 
 export default {
-  name: 'ObjectView',
+  name: 'ItemView',
   components: {
     draggable,
-    NewItemForm,
+    ItemForm,
   },
   inject: ['typesList'],
   props: {
@@ -182,15 +178,9 @@ export default {
       if (this.collapsedList[index]) this.collapsedList[index] = false;
       this.$emit('input', this.currentData);
     },
-
-    toggleItem(index) {
+    toggleList(index) {
       this.$set(this.collapsedList, index, this.collapsedList[index] ? false : true);
     },
-
-    toggleItemForm() {
-      this.itemForm = !this.itemForm;
-    },
-
     createItem(item) {
       const newItem = {
         childParams: null,
@@ -211,9 +201,15 @@ export default {
 
       this.currentData.push(newItem);
       this.$emit('input', this.currentData);
-      this.toggleItemForm();
+      this.toggleForm();
     },
-    checkKeyInput(item, e) {
+    toggleForm() {
+      this.itemForm = !this.itemForm;
+    },
+    dragEnd() {
+      this.$emit('input', this.currentData);
+    },
+    checkKey(item, e) {
       if (item.name.length === 0) {
         this.placeholderKey = 'cannot be empty';
         e.target.focus();
@@ -223,10 +219,7 @@ export default {
         e.target.focus();
       }
     },
-    dragEnd() {
-      this.$emit('input', this.currentData);
-    },
-    changeItemType(item, index) {
+    changeType(item, index) {
       switch (item.type) {
         case 'array':
         case 'object':
