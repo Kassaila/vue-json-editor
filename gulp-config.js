@@ -3,7 +3,6 @@ const global = {
     buildJs: 'build-js',
     buildStyles: 'build-styles',
     cleanBuild: 'clean-build',
-    copyFiles: 'copy-files',
     watch: 'watch',
     build: 'build',
   },
@@ -18,7 +17,7 @@ const global = {
       build: 'vue-json-editor',
     },
     styles: {
-      build: 'common',
+      build: 'vue-json-editor',
     },
   },
   buildJs: {

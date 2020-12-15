@@ -20,7 +20,8 @@
   },
   "main": "./dist/vue-json-editor.js",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "repository": {
     "type": "git",
@@ -57,6 +58,7 @@
     "gulp": "^4.0.2",
     "gulp-if": "^3.0.0",
     "gulp-postcss": "^9.0.0",
+    "gulp-rename": "^2.0.0",
     "gulp-sass": "^4.1.0",
     "husky": "^4.3.6",
     "node-notifier": "^9.0.0",

@@ -53,7 +53,7 @@ export default {
 };
 </script>
 <style lang="scss">
-@import '../../dist/main';
+@import '../../src/styles/main';
 @import 'vue-json-pretty/lib/styles.css';
 
 * {
