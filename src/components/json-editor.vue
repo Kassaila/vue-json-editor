@@ -1,26 +1,95 @@
 <template>
-  <item-view
-    v-model="currentData"
-    :object-type="rootType"
-    :parsed-data="currentData"
-    class="json-editor"
-  >
-    <template #icon-add>
-      <slot name="icon-add"> </slot>
-    </template>
-    <template #icon-delete>
-      <slot name="icon-delete"> </slot>
-    </template>
-    <template #icon-drag>
-      <slot name="icon-drag"> </slot>
-    </template>
-    <template #icon-collapse>
-      <slot name="icon-collapse"> </slot>
-    </template>
-  </item-view>
+  <div class="json-editor">
+    <div
+      class="object-view"
+      :class="{
+        'object-view_list': base.type === 'object' || base.type === 'array',
+        'object-view--collapsed': base.collapsed,
+      }"
+    >
+      <div class="object-view__key">
+        <button
+          v-if="base.type === 'object' || base.type === 'array'"
+          type="button"
+          class="json-editor__btn json-editor__btn_icon"
+          aria-controls="trigger"
+          :aria-expanded="!base.collapsed ? 'true' : 'false'"
+          @click="base.collapsed = !base.collapsed"
+        >
+          <b>
+            <slot name="icon-collapse">
+              <span
+                class="btn-icon btn-icon_collapse"
+                :title="base.collapsed ? 'Expand' : 'Collapse'"
+                >^</span
+              >
+            </slot>
+            <i v-if="base.type === 'object'">{{ `{ ${currentData.length} }` }}</i>
+            <i v-if="base.type === 'array'">{{ `[ ${currentData.length} ]` }}</i>
+          </b>
+        </button>
+        <span class="json-editor__input key__input"><i>root</i></span>
+      </div>
+      <div class="object-view__value" v-show="!base.collapsed">
+        <item-view
+          v-if="base.type === 'object' || base.type === 'array'"
+          v-model="currentData"
+          :object-type="base.type"
+          :parsed-data="currentData"
+        >
+          <template #icon-add>
+            <slot name="icon-add"> </slot>
+          </template>
+          <template #icon-delete>
+            <slot name="icon-delete"> </slot>
+          </template>
+          <template #icon-drag>
+            <slot name="icon-drag"> </slot>
+          </template>
+          <template #icon-collapse>
+            <slot name="icon-collapse"> </slot>
+          </template>
+        </item-view>
+        <template v-else>
+          <span v-if="base.type === 'null'" class="json-editor__input value__input">null</span>
+          <input
+            v-if="base.type === 'string'"
+            v-model.trim="currentData"
+            type="text"
+            class="json-editor__input value__input"
+          />
+          <input
+            v-if="base.type === 'number'"
+            v-model.number="currentData"
+            type="number"
+            class="json-editor__input value__input"
+            step="0.1e-100"
+          />
+          <select
+            v-if="base.type === 'boolean'"
+            v-model="currentData"
+            class="json-editor__select value__input"
+          >
+            <option :value="true">true</option>
+            <option :value="false">false</option>
+          </select>
+        </template>
+      </div>
+      <div class="object-view__tools">
+        <select v-model="base.type" class="json-editor__select" @change="changeBaseType">
+          <option v-for="(type, index) in base.typesList" :value="type" :key="index">
+            {{ type }}
+          </option>
+        </select>
+      </div>
+    </div>
+  </div>
 </template>
+
 <script>
 import ItemView from './item-view.vue';
+
+const typesList = ['object', 'array', 'string', 'number', 'boolean', 'null'];
 
 export default {
   name: 'JsonEditor',
@@ -30,7 +99,7 @@ export default {
   props: {
     dataInput: {
       type: Object | Array,
-      required: true,
+      required: false,
     },
     options: {
       type: Object,
@@ -42,12 +111,17 @@ export default {
   },
   provide() {
     return {
-      typesList: ['object', 'array', 'string', 'number', 'boolean', 'null'],
+      typesList: typesList,
       options: this.options,
     };
   },
   data() {
     return {
+      base: {
+        collapsed: false,
+        typesList: typesList,
+        type: this.getType(this.dataInput),
+      },
       currentData: [],
       cachedData: {},
     };
@@ -55,7 +129,7 @@ export default {
   watch: {
     dataInput: {
       handler() {
-        this.currentData = this.parseJson(this.dataInput);
+        this.processingData();
       },
     },
     currentData: {
@@ -67,11 +141,33 @@ export default {
 
         this.cachedData = JSON.parse(newDataStr);
 
-        this.$emit('data-output', this.buildJson(this.currentData));
+        this.emitOutputData();
       },
     },
   },
   methods: {
+    getType(object) {
+      switch (Object.prototype.toString.call(object)) {
+        case '[object Array]':
+          return 'array';
+          break;
+        case '[object Object]':
+          return 'object';
+          break;
+        case '[object Null]':
+        case '[object Undefined]':
+          return 'null';
+          break;
+        case '[object Date]':
+        case '[object RegExp]':
+        case '[object Function]':
+          return 'transform';
+          break;
+        default:
+          return typeof object;
+          break;
+      }
+    },
     parseJson(dataInput) {
       const parseItem = (key, value, type) => {
         const item = {
@@ -102,32 +198,8 @@ export default {
         return Object.entries(object).map(([key, value]) => parseItem(key, value, type));
       };
 
-      return parseObject(dataInput, this.rootType);
+      return parseObject(dataInput, this.base.type);
     },
-
-    getType(object) {
-      switch (Object.prototype.toString.call(object)) {
-        case '[object Array]':
-          return 'array';
-          break;
-        case '[object Object]':
-          return 'object';
-          break;
-        case '[object Null]':
-        case '[object Undefined]':
-          return 'null';
-          break;
-        case '[object Date]':
-        case '[object RegExp]':
-        case '[object Function]':
-          return 'transform';
-          break;
-        default:
-          return typeof object;
-          break;
-      }
-    },
-
     buildJson(dataTree) {
       const buildObject = (data, type) => {
         const buildData = data.map((item, i) => {
@@ -157,17 +229,61 @@ export default {
         }
       };
 
-      return buildObject(dataTree, this.rootType);
+      return buildObject(dataTree, this.base.type);
     },
-  },
-  computed: {
-    rootType() {
-      return this.getType(this.dataInput);
+    processingData() {
+      switch (this.base.type) {
+        case 'array':
+        case 'object':
+          this.currentData = this.parseJson(this.dataInput);
+          break;
+        case 'transform':
+          this.currentData = this.dataInput.toString();
+          break;
+        default:
+          this.currentData = this.dataInput;
+          break;
+      }
+    },
+    emitOutputData() {
+      switch (this.base.type) {
+        case 'array':
+        case 'object':
+          this.$emit('data-output', this.buildJson(this.currentData));
+          break;
+        default:
+          this.$emit('data-output', this.currentData);
+          break;
+      }
+    },
+    changeBaseType() {
+      switch (this.base.type) {
+        case 'array':
+          this.currentData = this.parseJson([]);
+          break;
+        case 'object':
+          this.currentData = this.parseJson({});
+          break;
+        case 'number':
+          this.currentData = 0;
+          break;
+        case 'string':
+          this.currentData = '';
+          break;
+        case 'boolean':
+          this.currentData = true;
+          break;
+        case 'null':
+          this.currentData = null;
+          break;
+        default:
+          break;
+      }
     },
   },
   mounted() {
-    this.currentData = this.parseJson(this.dataInput);
-    this.$emit('data-output', this.buildJson(this.currentData));
+    this.processingData();
+    this.emitOutputData();
   },
 };
 </script>

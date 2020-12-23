@@ -47,26 +47,25 @@
           <i v-else>{{ index }}. </i>
         </div>
         <div class="object-view__value" v-show="!collapsedList[index]">
-          <template v-if="item.type === 'object' || item.type === 'array'">
-            <item-view
-              :object-type="item.type"
-              :parsed-data="item.childParams"
-              v-model="item.childParams"
-            >
-              <template #icon-add>
-                <slot name="icon-add"> </slot>
-              </template>
-              <template #icon-delete>
-                <slot name="icon-delete"> </slot>
-              </template>
-              <template #icon-drag>
-                <slot name="icon-drag"> </slot>
-              </template>
-              <template #icon-collapse>
-                <slot name="icon-collapse"> </slot>
-              </template>
-            </item-view>
-          </template>
+          <item-view
+            v-if="item.type === 'object' || item.type === 'array'"
+            :object-type="item.type"
+            :parsed-data="item.childParams"
+            v-model="item.childParams"
+          >
+            <template #icon-add>
+              <slot name="icon-add"> </slot>
+            </template>
+            <template #icon-delete>
+              <slot name="icon-delete"> </slot>
+            </template>
+            <template #icon-drag>
+              <slot name="icon-drag"> </slot>
+            </template>
+            <template #icon-collapse>
+              <slot name="icon-collapse"> </slot>
+            </template>
+          </item-view>
           <template v-else>
             <span v-if="item.type === 'null'" class="json-editor__input value__input">null</span>
             <input
