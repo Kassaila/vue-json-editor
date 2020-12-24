@@ -18,10 +18,7 @@ Single file component
 
 ```html
 <template>
-  <json-editor
-  :data-input="dataInput"
-  @data-output="(data) => (dataOutput = data)">
-  </json-editor>
+  <json-editor :data-input="dataInput" @data-output="(data) => (dataOutput = data)"> </json-editor>
 </template>
 <script>
   import JsonEditor from '@kassaila/vue-json-editor';
@@ -44,7 +41,7 @@ Single file component
                 ],
                 others: {
                   id: 1246,
-                  time: new Date()
+                  time: new Date(),
                   description: 'last example run',
                   pattern: /abc/g,
                 },
@@ -58,16 +55,17 @@ Single file component
 
 ## Capability
 
-| Name | Options | Type | Required | Description |
-| --- | --- | --- | --- | --- |
-| `data-input` | `props` | `Object` or `Array` | `true` | Input data |
-| `options` | `props` | `Object` | `false` | Reserved (now empty) |
-| `data-output` | `event` | `Object` or `Array` | - | Output data, return modified data |
-| `icon-add` | `slot` | `<template>` | `false` | Icon for button - add new item |
-| `icon-delete` | `slot` | `<template>` | `false` | Icon for button - delete item |
-| `icon-drag` | `slot` | `<template>` | `false` | Icon for dragbar |
-| `icon-collapse` | `slot` | `<template>` | `false` | Icon for button - collapse object list |
+| Name            | Options | Type                                                                                   | Required | Description                            |
+| --------------- | ------- | -------------------------------------------------------------------------------------- | -------- | -------------------------------------- |
+| `data-input`    | `props` | `Object`, `Array`, `String`, `Number`, `Boolean`, `Null`, `Date`, `RegExp`, `Function` | `true`   | Input data                             |
+| `options`       | `props` | `Object`                                                                               | `false`  | Reserved (now empty)                   |
+| `data-output`   | `event` | `Object`, `Array`, `String`, `Number`, `Boolean`, `Null`                               | -        | Output data, return modified data      |
+| `icon-add`      | `slot`  | `<template>`                                                                           | `false`  | Icon for button - add new item         |
+| `icon-delete`   | `slot`  | `<template>`                                                                           | `false`  | Icon for button - delete item          |
+| `icon-drag`     | `slot`  | `<template>`                                                                           | `false`  | Icon for dragbar                       |
+| `icon-collapse` | `slot`  | `<template>`                                                                           | `false`  | Icon for button - collapse object list |
 
-For for some types of the data, like `Date`, `RegExp`, `Function` will be applied transformation to `string` (by the method `.toString()`)
+For some types of the data, like `Date`, `RegExp`, `Function` will be applied transformation to
+`string` (by the method `.toString()`)
 
 This is a modified version of the fork [vue-json-edit](https://github.com/jinkin1995/vue-json-edit)
