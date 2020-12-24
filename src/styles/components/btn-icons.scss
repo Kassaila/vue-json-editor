@@ -1,0 +1,41 @@
+.json-editor {
+  .btn-icon {
+    --btn-icon-color: var(--color-secondary);
+    --btn-icon-border-color: var(--color-secondary);
+    width: calc(var(--font-size) * 1.15);
+    display: inline-block;
+    border: 1px solid var(--btn-icon-border-color);
+    border-radius: var(--indent-secondary);
+    transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    &:hover {
+      color: var(--btn-icon-color);
+      border-color: var(--btn-icon-border-color);
+    }
+    &_add {
+      &:hover {
+        --btn-icon-color: var(--color-accent);
+        --btn-icon-border-color: var(--btn-icon-color);
+      }
+    }
+    &_delete {
+      &:hover {
+        --btn-icon-color: var(--color-danger);
+        --btn-icon-border-color: var(--btn-icon-color);
+      }
+    }
+    &_drag {
+      cursor: move;
+    }
+    &_collapse {
+      --btn-icon-border-color: transparent;
+      transform: rotateZ(180deg);
+    }
+  }
+  [aria-expanded='false'] {
+    .btn-icon {
+      &_collapse {
+        transform: rotateZ(90deg);
+      }
+    }
+  }
+}

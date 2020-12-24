@@ -53,7 +53,12 @@ export default {
 };
 </script>
 <style lang="scss">
+@import '../../src/styles/main';
 @import 'vue-json-pretty/lib/styles.css';
+
+* {
+  box-sizing: border-box;
+}
 
 .page-title {
   margin-top: 32px;
