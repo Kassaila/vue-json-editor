@@ -98,8 +98,10 @@ export default {
   },
   props: {
     dataInput: {
-      type: Object | Array,
       required: false,
+      default() {
+        return null;
+      },
     },
     options: {
       type: Object,
@@ -121,9 +123,10 @@ export default {
         collapsed: false,
         typesList: typesList,
         type: this.getType(this.dataInput),
+        cachedType: `${this.type}`,
       },
       currentData: [],
-      cachedData: {},
+      cachedData: [],
     };
   },
   watch: {
@@ -137,7 +140,13 @@ export default {
       handler() {
         const newDataStr = JSON.stringify(this.currentData);
 
-        if (newDataStr === JSON.stringify(this.cachedData)) return;
+        if (
+          newDataStr === JSON.stringify(this.cachedData) &&
+          this.base.type === this.base.cachedType
+        )
+          return;
+
+        this.base.cachedType = `${this.base.type}`;
 
         this.cachedData = JSON.parse(newDataStr);
 
@@ -181,6 +190,7 @@ export default {
           case 'object':
           case 'array':
             item.childParams = parseObject(value, item.type);
+            item.collapsed = false;
             break;
           case 'transform':
             item.type = 'string';

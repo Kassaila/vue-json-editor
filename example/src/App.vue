@@ -7,12 +7,10 @@
       syntax.
     </p>
     <div class="container">
-      <div class="json-editor">
-        <json-editor
-          :data-input="dataInput"
-          @data-output="(data) => (dataOutput = data)"
-        ></json-editor>
-      </div>
+      <json-editor
+        :data-input="dataInput"
+        @data-output="(data) => (dataOutput = data)"
+      ></json-editor>
       <div class="json-output">
         <vue-json-pretty :data="dataOutput"> </vue-json-pretty>
       </div>

@@ -12,7 +12,7 @@
         class="object-view"
         :class="{
           'object-view_list': item.type === 'object' || item.type === 'array',
-          'object-view--collapsed': collapsedList[index],
+          'object-view--collapsed': item.collapsed,
         }"
       >
         <div class="object-view__key">
@@ -21,14 +21,14 @@
             type="button"
             class="json-editor__btn json-editor__btn_icon"
             aria-controls="trigger"
-            :aria-expanded="!collapsedList[index] ? 'true' : 'false'"
-            @click="toggleList(index)"
+            :aria-expanded="!item.collapsed ? 'true' : 'false'"
+            @click="item.collapsed = !item.collapsed"
           >
             <b>
               <slot name="icon-collapse"
                 ><span
                   class="btn-icon btn-icon_collapse"
-                  :title="collapsedList[index] ? 'Expand' : 'Collapse'"
+                  :title="item.collapsed ? 'Expand' : 'Collapse'"
                   >^</span
                 ></slot
               >
@@ -46,7 +46,7 @@
           />
           <i v-else>{{ index }}. </i>
         </div>
-        <div class="object-view__value" v-show="!collapsedList[index]">
+        <div class="object-view__value" v-show="!item.collapsed">
           <item-view
             v-if="item.type === 'object' || item.type === 'array'"
             :object-type="item.type"
@@ -149,7 +149,7 @@ export default {
   props: {
     objectType: {
       type: String,
-      required: false,
+      required: true,
     },
     parsedData: {
       type: Array,
@@ -160,7 +160,6 @@ export default {
     return {
       currentData: this.parsedData ?? [],
       itemForm: false,
-      collapsedList: {},
       placeholderKey: 'key',
     };
   },
@@ -174,11 +173,7 @@ export default {
   methods: {
     deleteItem(parentDom, item, index) {
       this.currentData.splice(index, 1);
-      if (this.collapsedList[index]) this.collapsedList[index] = false;
       this.$emit('input', this.currentData);
-    },
-    toggleList(index) {
-      this.$set(this.collapsedList, index, this.collapsedList[index] ? false : true);
     },
     createItem(item) {
       const newItem = {
@@ -192,6 +187,7 @@ export default {
         case 'array':
         case 'object':
           newItem.childParams = item.value;
+          newItem.collapsed = false;
           break;
         default:
           newItem.remark = item.value;
@@ -212,7 +208,7 @@ export default {
       if (item.name.length === 0) {
         this.placeholderKey = 'cannot be empty';
         e.target.focus();
-      } else if (!isNaN(Number(item.name[0]))) {
+      } else if (item.name[0].match(/[a-zA-Z_]/) === null) {
         item.name = '';
         this.placeholderKey = 'not correct key';
         e.target.focus();
@@ -227,19 +223,19 @@ export default {
           break;
         case 'string':
           item.remark = '';
-          this.collapsedList[index] = false;
+          item.collapsed = false;
           break;
         case 'number':
           item.remark = 0;
-          this.collapsedList[index] = false;
+          item.collapsed = false;
           break;
         case 'boolean':
           item.remark = true;
-          this.collapsedList[index] = false;
+          item.collapsed = false;
           break;
         case 'null':
           item.remark = null;
-          this.collapsedList[index] = false;
+          item.collapsed = false;
           break;
         default:
           break;
