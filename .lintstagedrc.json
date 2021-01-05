@@ -1,3 +1,4 @@
 {
-  "src/*": "npx prettier --write"
+  "**/*.{md, json, html}": ["npx prettier --write --ignore-unknown"],
+  "**/*.{js,vue}": ["npx prettier --write --ignore-unknown", "npx eslint --fix"]
 }
