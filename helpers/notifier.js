@@ -4,7 +4,7 @@ const global = require('../gulp-config.js');
 
 module.exports = {
   error(error, title, callback) {
-    const errorNote = Object.assign({}, global.error);
+    const errorNote = { ...global.error };
 
     errorNote.message = title;
 

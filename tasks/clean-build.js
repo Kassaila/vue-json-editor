@@ -1,7 +1,6 @@
 /**
  * Clean build folder
  */
-'use strict';
 
 const del = require('del');
 
@@ -13,9 +12,7 @@ module.exports = function () {
     dot: true,
   };
 
-  const delFolders = [
-    `./${global.folder.build}/**/*`,
-  ];
+  const delFolders = [`./${global.folder.build}/**/*`];
 
   return async () => {
     const deletedPaths = await del(delFolders, config);
