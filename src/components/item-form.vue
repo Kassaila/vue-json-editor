@@ -36,9 +36,14 @@
           <option :value="false">false</option>
         </select>
       </template>
-      <select v-once v-model="item.type" class="json-editor__select" @change="changeType">
-        <option v-for="(item, index) in typesList" :value="item" :key="index">
-          {{ item }}
+      <select
+        v-once
+        v-model="item.type"
+        class="json-editor__select"
+        @change="item.value = changeType(item.type)"
+      >
+        <option v-for="(type, index) in typesList" :key="index" :value="type">
+          {{ type }}
         </option>
       </select>
     </div>
@@ -53,16 +58,18 @@
 </template>
 
 <script>
+import { changeType } from '../helpers/data-handling';
+
 export default {
   name: 'ItemForm',
+  inject: ['typesList'],
   props: {
     requiredKey: {
       type: Boolean,
       required: false,
-      default: true,
+      "default": true,
     },
   },
-  inject: ['typesList'],
   data() {
     return {
       item: {
@@ -74,39 +81,21 @@ export default {
     };
   },
   methods: {
+    changeType,
     checkKey() {
       if (this.requiredKey) {
         if (this.item.key.length === 0) {
           this.placeholderKey = 'cannot be empty';
           return false;
-        } else if (!isNaN(Number(this.item.key[0]))) {
+        }
+        if (this.item.key[0].match(/[a-zA-Z_]/) === null) {
           this.item.key = '';
           this.placeholderKey = 'not correct key';
           return false;
         }
-        return true;
       }
+
       return true;
-    },
-    changeType() {
-      switch (this.item.type) {
-        case 'array':
-        case 'object':
-          this.item.value = [];
-          break;
-        case 'number':
-          this.item.value = 0;
-          break;
-        case 'boolean':
-          this.item.value = true;
-          break;
-        case 'null':
-          this.item.value = null;
-          break;
-        default:
-          this.item.value = '';
-          break;
-      }
     },
     submit() {
       if (!this.checkKey()) return;

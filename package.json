@@ -35,7 +35,7 @@
     "node": ">=10.0.0"
   },
   "scripts": {
-    "lint:js": "npx eslint **/*.{js,vue} --fix",
+    "lint:js": "npx eslint --fix **/*.{js,vue}",
     "format": "npx prettier . --write --ignore-unknown",
     "pre-commit": "npx lint-staged -r",
     "dev": "npx gulp",

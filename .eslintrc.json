@@ -21,6 +21,7 @@
     "prettier/vue"
   ],
   "rules": {
+    "no-param-reassign": ["error", { "props": false }],
     "no-underscore-dangle": "off",
     "func-names": ["warn", "as-needed"],
     "quote-props": [

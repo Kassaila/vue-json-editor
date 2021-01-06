@@ -30,7 +30,7 @@
         </button>
         <span class="json-editor__input key__input"><i>root</i></span>
       </div>
-      <div class="object-view__value" v-show="!base.collapsed">
+      <div v-show="!base.collapsed" class="object-view__value">
         <item-view
           v-if="base.type === 'object' || base.type === 'array'"
           v-model="currentData"
@@ -76,8 +76,12 @@
         </template>
       </div>
       <div class="object-view__tools">
-        <select v-model="base.type" class="json-editor__select" @change="changeBaseType">
-          <option v-for="(type, index) in base.typesList" :value="type" :key="index">
+        <select
+          v-model="base.type"
+          class="json-editor__select"
+          @change="currentData = changeType(base.type)"
+        >
+          <option v-for="(type, index) in base.typesList" :key="index" :value="type">
             {{ type }}
           </option>
         </select>
@@ -87,6 +91,7 @@
 </template>
 
 <script>
+import { changeType, getType } from '../helpers/data-handling';
 import ItemView from './item-view.vue';
 
 const typesList = ['object', 'array', 'string', 'number', 'boolean', 'null'];
@@ -96,9 +101,15 @@ export default {
   components: {
     ItemView,
   },
+  provide() {
+    return {
+      typesList,
+      options: this.options,
+    };
+  },
   props: {
     dataInput: {
-      required: false,
+      type: [String, Number, Boolean, Array, Object],
       default() {
         return null;
       },
@@ -111,17 +122,11 @@ export default {
       },
     },
   },
-  provide() {
-    return {
-      typesList: typesList,
-      options: this.options,
-    };
-  },
   data() {
     return {
       base: {
         collapsed: false,
-        typesList: typesList,
+        typesList,
         type: this.getType(this.dataInput),
         cachedType: `${this.type}`,
       },
@@ -154,98 +159,68 @@ export default {
       },
     },
   },
+  mounted() {
+    this.processingData();
+    this.emitOutputData();
+  },
   methods: {
-    getType(object) {
-      switch (Object.prototype.toString.call(object)) {
-        case '[object Array]':
-          return 'array';
+    changeType,
+    getType,
+    parseItem(key, value, type) {
+      const item = {
+        name: type === 'object' ? key : null,
+        type: this.getType(value),
+        remark: null,
+        childParams: null,
+        collapsed: false,
+      };
+
+      switch (item.type) {
+        case 'object':
+        case 'array':
+          item.childParams = this.parseObject(value, item.type);
           break;
-        case '[object Object]':
-          return 'object';
-          break;
-        case '[object Null]':
-        case '[object Undefined]':
-          return 'null';
-          break;
-        case '[object Date]':
-        case '[object RegExp]':
-        case '[object Function]':
-          return 'transform';
+        case 'transform':
+          item.type = 'string';
+          item.remark = value.toString();
           break;
         default:
-          return typeof object;
+          item.remark = value;
           break;
       }
-    },
-    parseJson(dataInput) {
-      const parseItem = (key, value, type) => {
-        const item = {
-          name: type === 'object' ? key : null,
-          type: this.getType(value),
-          remark: null,
-          childParams: null,
-        };
 
+      return item;
+    },
+    parseObject(data, type) {
+      return Object.entries(data).map(([key, value]) => this.parseItem(key, value, type));
+    },
+    buildObject(data, type) {
+      const buildData = data.map((item) => {
         switch (item.type) {
-          case 'object':
           case 'array':
-            item.childParams = parseObject(value, item.type);
-            item.collapsed = false;
-            break;
-          case 'transform':
-            item.type = 'string';
-            item.remark = value.toString();
-            break;
-          default:
-            item.remark = value;
-            break;
-        }
-
-        return item;
-      };
-
-      const parseObject = (object, type) => {
-        return Object.entries(object).map(([key, value]) => parseItem(key, value, type));
-      };
-
-      return parseObject(dataInput, this.base.type);
-    },
-    buildJson(dataTree) {
-      const buildObject = (data, type) => {
-        const buildData = data.map((item, i) => {
-          switch (item.type) {
-            case 'array':
-            case 'object':
-              const value = buildObject(item.childParams, item.type);
-
-              return item.name !== null ? [item.name, value] : value;
-              break;
-            default:
-              return item.name !== null ? [item.name, item.remark] : item.remark;
-              break;
-          }
-        });
-
-        switch (type) {
-          case 'array':
-            return buildData;
-            break;
           case 'object':
-            return Object.fromEntries(buildData);
-            break;
+            return item.name !== null
+              ? [item.name, this.buildObject(item.childParams, item.type)]
+              : this.buildObject(item.childParams, item.type);
           default:
-            return buildData[0];
-            break;
+            return item.name !== null ? [item.name, item.remark] : item.remark;
         }
-      };
+      });
 
-      return buildObject(dataTree, this.base.type);
+      switch (type) {
+        case 'array':
+          return buildData;
+        case 'object':
+          return Object.fromEntries(buildData);
+        default:
+          return buildData[0];
+      }
     },
     processingData() {
       switch (this.base.type) {
         case 'array':
         case 'object':
-          this.currentData = this.parseJson(this.dataInput);
+          this.currentData = this.parseObject(this.dataInput, this.base.type);
           break;
         case 'transform':
           this.currentData = this.dataInput.toString();
@@ -259,41 +234,13 @@ export default {
       switch (this.base.type) {
         case 'array':
         case 'object':
-          this.$emit('data-output', this.buildJson(this.currentData));
+          this.$emit('data-output', this.buildObject(this.currentData, this.base.type));
           break;
         default:
           this.$emit('data-output', this.currentData);
           break;
       }
     },
-    changeBaseType() {
-      switch (this.base.type) {
-        case 'array':
-          this.currentData = this.parseJson([]);
-          break;
-        case 'object':
-          this.currentData = this.parseJson({});
-          break;
-        case 'number':
-          this.currentData = 0;
-          break;
-        case 'string':
-          this.currentData = '';
-          break;
-        case 'boolean':
-          this.currentData = true;
-          break;
-        case 'null':
-          this.currentData = null;
-          break;
-        default:
-          break;
-      }
-    },
-  },
-  mounted() {
-    this.processingData();
-    this.emitOutputData();
   },
 };
 </script>

@@ -7,8 +7,8 @@
       @end="dragEnd"
     >
       <div
-        v-for="(item, index) in currentData"
-        :key="`${item.type}-${index}`"
+        v-for="(item, i) in currentData"
+        :key="`${item.type}-${i}`"
         class="object-view"
         :class="{
           'object-view_list': item.type === 'object' || item.type === 'array',
@@ -42,16 +42,16 @@
             type="text"
             :placeholder="placeholderKey"
             class="json-editor__input key__input"
-            @blur="checkKey(item, $event)"
+            @blur="checkItem(item, $event)"
           />
-          <i v-else>{{ index }}. </i>
+          <i v-else>{{ i }}. </i>
         </div>
-        <div class="object-view__value" v-show="!item.collapsed">
+        <div v-show="!item.collapsed" class="object-view__value">
           <item-view
             v-if="item.type === 'object' || item.type === 'array'"
+            v-model="item.childParams"
             :object-type="item.type"
             :parsed-data="item.childParams"
-            v-model="item.childParams"
           >
             <template #icon-add>
               <slot name="icon-add"> </slot>
@@ -92,8 +92,8 @@
           </template>
         </div>
         <div class="object-view__tools">
-          <select v-model="item.type" class="json-editor__select" @change="changeType(item, index)">
-            <option v-for="(type, index) in typesList" :value="type" :key="index">
+          <select v-model="item.type" class="json-editor__select" @change="item = changeType(item)">
+            <option v-for="(type, j) in typesList" :key="j" :value="type">
               {{ type }}
             </option>
           </select>
@@ -105,7 +105,7 @@
           <button
             type="button"
             class="json-editor__btn json-editor__btn_icon"
-            @click="deleteItem(parsedData, item, index)"
+            @click="deleteItem(parsedData, item, i)"
           >
             <slot name="icon-delete">
               <span class="btn-icon btn-icon_delete" title="Delete">-</span>
@@ -117,9 +117,9 @@
 
     <item-form
       v-if="itemForm"
+      :required-key="objectType !== 'array'"
       @add-new-item="createItem"
       @cancel-new-item="toggleForm"
-      :required-key="objectType !== 'array'"
     ></item-form>
 
     <button
@@ -177,17 +177,17 @@ export default {
     },
     createItem(item) {
       const newItem = {
-        childParams: null,
         name: this.objectType === 'object' ? item.key : null,
-        remark: null,
         type: item.type,
+        remark: null,
+        childParams: null,
+        collapsed: false,
       };
 
       switch (newItem.type) {
         case 'array':
         case 'object':
           newItem.childParams = item.value;
-          newItem.collapsed = false;
           break;
         default:
           newItem.remark = item.value;
@@ -204,17 +204,24 @@ export default {
     dragEnd() {
       this.$emit('input', this.currentData);
     },
-    checkKey(item, e) {
+    checkItem(item, e) {
+      if (!this.checkKey(item)) e.target.focus();
+    },
+    checkKey(item) {
       if (item.name.length === 0) {
         this.placeholderKey = 'cannot be empty';
-        e.target.focus();
-      } else if (item.name[0].match(/[a-zA-Z_]/) === null) {
+        return false;
+      }
+      if (item.name[0].match(/[a-zA-Z_]/) === null) {
         item.name = '';
         this.placeholderKey = 'not correct key';
-        e.target.focus();
+        return false;
       }
+
+      this.placeholderKey = 'key';
+      return true;
     },
-    changeType(item, index) {
+    changeType(item) {
       switch (item.type) {
         case 'array':
         case 'object':
