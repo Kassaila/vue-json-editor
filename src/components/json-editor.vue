@@ -34,7 +34,7 @@
         <item-view
           v-if="base.type === 'object' || base.type === 'array'"
           v-model="currentData"
-          :object-type="base.type"
+          :item-type="base.type"
           :parsed-data="currentData"
         >
           <template #icon-add>
@@ -92,6 +92,7 @@
 
 <script>
 import { changeType, getType } from '../helpers/data-handling';
+import Item from '../helpers/item';
 import ItemView from './item-view.vue';
 
 const typesList = ['object', 'array', 'string', 'number', 'boolean', 'null'];
@@ -166,44 +167,16 @@ export default {
   methods: {
     changeType,
     getType,
-    parseItem(key, value, type) {
-      const item = {
-        name: type === 'object' ? key : null,
-        type: this.getType(value),
-        remark: null,
-        childParams: null,
-        collapsed: false,
-      };
-
-      switch (item.type) {
-        case 'object':
-        case 'array':
-          item.childParams = this.parseObject(value, item.type);
-          break;
-        case 'transform':
-          item.type = 'string';
-          item.remark = value.toString();
-          break;
-        default:
-          item.remark = value;
-          break;
-      }
-
-      return item;
-    },
-    parseObject(data, type) {
-      return Object.entries(data).map(([key, value]) => this.parseItem(key, value, type));
-    },
     buildObject(data, type) {
       const buildData = data.map((item) => {
         switch (item.type) {
           case 'array':
           case 'object':
-            return item.name !== null
-              ? [item.name, this.buildObject(item.childParams, item.type)]
-              : this.buildObject(item.childParams, item.type);
+            return item.key !== null
+              ? [item.key, this.buildObject(item.value, item.type)]
+              : this.buildObject(item.value, item.type);
           default:
-            return item.name !== null ? [item.name, item.remark] : item.remark;
+            return item.key !== null ? [item.key, item.value] : item.value;
         }
       });
 
@@ -217,18 +190,7 @@ export default {
       }
     },
     processingData() {
-      switch (this.base.type) {
-        case 'array':
-        case 'object':
-          this.currentData = this.parseObject(this.dataInput, this.base.type);
-          break;
-        case 'transform':
-          this.currentData = this.dataInput.toString();
-          break;
-        default:
-          this.currentData = this.dataInput;
-          break;
-      }
+      this.currentData = Item.processValue(this.dataInput, this.base.type);
     },
     emitOutputData() {
       switch (this.base.type) {

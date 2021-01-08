@@ -5,7 +5,7 @@
         v-if="requiredKey"
         v-model.trim="item.key"
         type="text"
-        :placeholder="placeholderKey"
+        :placeholder="item.placeholder"
         class="json-editor__input new-item-form__input"
       />
       <template v-if="item.type !== 'array' && item.type !== 'object'">
@@ -42,7 +42,7 @@
         class="json-editor__select"
         @change="item.value = changeType(item.type)"
       >
-        <option v-for="(type, index) in typesList" :key="index" :value="type">
+        <option v-for="(type, i) in typesList" :key="i" :value="type">
           {{ type }}
         </option>
       </select>
@@ -58,7 +58,8 @@
 </template>
 
 <script>
-import { changeType } from '../helpers/data-handling';
+import { changeType, checkKey } from '../helpers/data-handling';
+import Item from '../helpers/item';
 
 export default {
   name: 'ItemForm',
@@ -76,31 +77,17 @@ export default {
         type: 'string',
         key: '',
         value: '',
+        placeholder: 'key',
       },
-      placeholderKey: 'key',
     };
   },
   methods: {
     changeType,
-    checkKey() {
-      if (this.requiredKey) {
-        if (this.item.key.length === 0) {
-          this.placeholderKey = 'cannot be empty';
-          return false;
-        }
-        if (this.item.key[0].match(/[a-zA-Z_]/) === null) {
-          this.item.key = '';
-          this.placeholderKey = 'not correct key';
-          return false;
-        }
-      }
-
-      return true;
-    },
+    checkKey,
     submit() {
-      if (!this.checkKey()) return;
+      if (this.requiredKey && !this.checkKey(this.item)) return;
 
-      this.$emit('add-new-item', this.item);
+      this.$emit('add-new-item', new Item(this.item, this.requiredKey ? 'object' : 'array'));
     },
     cancel() {
       this.$emit('cancel-new-item');

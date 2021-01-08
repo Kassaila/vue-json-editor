@@ -32,4 +32,19 @@ function getType(object) {
   }
 }
 
-export { changeType, getType };
+function checkKey(item) {
+  if (item.key.length === 0) {
+    item.placeholder = 'cannot be empty';
+    return false;
+  }
+  if (item.key[0].match(/[a-zA-Z_]/) === null) {
+    item.key = '';
+    item.placeholder = 'not correct key';
+    return false;
+  }
+
+  item.placeholder = 'key';
+  return true;
+}
+
+export { changeType, getType, checkKey };
