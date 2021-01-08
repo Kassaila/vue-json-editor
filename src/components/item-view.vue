@@ -92,11 +92,7 @@
           </template>
         </div>
         <div class="object-view__tools">
-          <select
-            v-model="item.type"
-            class="json-editor__select"
-            @change="item = changeItemType(item)"
-          >
+          <select v-model="item.type" class="json-editor__select" @change="item.changeType()">
             <option v-for="(type, j) in typesList" :key="j" :value="type">
               {{ type }}
             </option>
@@ -109,7 +105,7 @@
           <button
             type="button"
             class="json-editor__btn json-editor__btn_icon"
-            @click="deleteItem(parsedData, item, i)"
+            @click="deleteItem(i)"
           >
             <slot name="icon-delete">
               <span class="btn-icon btn-icon_delete" title="Delete">-</span>
@@ -141,7 +137,6 @@
 
 <script>
 import draggable from 'vuedraggable';
-import { changeType, checkKey } from '../helpers/data-handling';
 import ItemForm from './item-form.vue';
 
 export default {
@@ -175,10 +170,8 @@ export default {
     },
   },
   methods: {
-    changeType,
-    checkKey,
-    deleteItem(parentDom, item, index) {
-      this.currentData.splice(index, 1);
+    deleteItem(i) {
+      this.currentData.splice(i, 1);
       this.$emit('input', this.currentData);
     },
     createItem(item) {
@@ -193,14 +186,7 @@ export default {
       this.$emit('input', this.currentData);
     },
     checkItemKey(item, e) {
-      if (!this.checkKey(item)) e.target.focus();
-    },
-    changeItemType(item) {
-      if (item.type !== 'object' && item.type !== 'array') {
-        item.collapsed = false;
-      }
-
-      item.value = this.changeType(item.type);
+      if (!item.checkKey()) e.target.focus();
     },
   },
 };

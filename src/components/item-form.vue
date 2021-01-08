@@ -36,12 +36,7 @@
           <option :value="false">false</option>
         </select>
       </template>
-      <select
-        v-once
-        v-model="item.type"
-        class="json-editor__select"
-        @change="item.value = changeType(item.type)"
-      >
+      <select v-once v-model="item.type" class="json-editor__select" @change="item.changeType()">
         <option v-for="(type, i) in typesList" :key="i" :value="type">
           {{ type }}
         </option>
@@ -58,7 +53,6 @@
 </template>
 
 <script>
-import { changeType, checkKey } from '../helpers/data-handling';
 import Item from '../helpers/item';
 
 export default {
@@ -73,21 +67,14 @@ export default {
   },
   data() {
     return {
-      item: {
-        type: 'string',
-        key: '',
-        value: '',
-        placeholder: 'key',
-      },
+      item: new Item({ key: '', value: '', type: 'string' }, this.requiredKey ? 'object' : 'array'),
     };
   },
   methods: {
-    changeType,
-    checkKey,
     submit() {
-      if (this.requiredKey && !this.checkKey(this.item)) return;
+      if (this.requiredKey && !this.item.checkKey()) return;
 
-      this.$emit('add-new-item', new Item(this.item, this.requiredKey ? 'object' : 'array'));
+      this.$emit('add-new-item', this.item);
     },
     cancel() {
       this.$emit('cancel-new-item');
