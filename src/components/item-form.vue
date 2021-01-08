@@ -5,7 +5,7 @@
         v-if="requiredKey"
         v-model.trim="item.key"
         type="text"
-        :placeholder="placeholderKey"
+        :placeholder="item.placeholder"
         class="json-editor__input new-item-form__input"
       />
       <template v-if="item.type !== 'array' && item.type !== 'object'">
@@ -36,9 +36,9 @@
           <option :value="false">false</option>
         </select>
       </template>
-      <select v-once v-model="item.type" class="json-editor__select" @change="changeType">
-        <option v-for="(item, index) in typesList" :value="item" :key="index">
-          {{ item }}
+      <select v-once v-model="item.type" class="json-editor__select" @change="item.changeType()">
+        <option v-for="(type, i) in typesList" :key="i" :value="type">
+          {{ type }}
         </option>
       </select>
     </div>
@@ -53,63 +53,26 @@
 </template>
 
 <script>
+import Item from '../helpers/item';
+
 export default {
   name: 'ItemForm',
+  inject: ['typesList'],
   props: {
     requiredKey: {
       type: Boolean,
       required: false,
-      default: true,
+      "default": true,
     },
   },
-  inject: ['typesList'],
   data() {
     return {
-      item: {
-        type: 'string',
-        key: '',
-        value: '',
-      },
-      placeholderKey: 'key',
+      item: new Item({ key: '', value: '', type: 'string' }, this.requiredKey ? 'object' : 'array'),
     };
   },
   methods: {
-    checkKey() {
-      if (this.requiredKey) {
-        if (this.item.key.length === 0) {
-          this.placeholderKey = 'cannot be empty';
-          return false;
-        } else if (!isNaN(Number(this.item.key[0]))) {
-          this.item.key = '';
-          this.placeholderKey = 'not correct key';
-          return false;
-        }
-        return true;
-      }
-      return true;
-    },
-    changeType() {
-      switch (this.item.type) {
-        case 'array':
-        case 'object':
-          this.item.value = [];
-          break;
-        case 'number':
-          this.item.value = 0;
-          break;
-        case 'boolean':
-          this.item.value = true;
-          break;
-        case 'null':
-          this.item.value = null;
-          break;
-        default:
-          this.item.value = '';
-          break;
-      }
-    },
     submit() {
-      if (!this.checkKey()) return;
+      if (this.requiredKey && !this.item.checkKey()) return;
 
       this.$emit('add-new-item', this.item);
     },

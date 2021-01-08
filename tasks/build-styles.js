@@ -1,7 +1,6 @@
 /**
  * Build styles for application from SASS
  */
-'use strict';
 
 const gulp = require('gulp');
 const sass = require('gulp-sass');
@@ -23,13 +22,12 @@ module.exports = function () {
     plugins.push(cssnano());
   }
 
-  return (done) => {
-    return gulp
+  return (done) =>
+    gulp
       .src(`./${global.folder.dev}/styles/*.scss`, { sourcemaps: false })
       .pipe(rename(`${global.file.styles.build}`))
       .pipe(sass.sync({ sourceMap: false }))
       .on('error', (error) => notifier.error(error.message, 'Main Sass compiling error', done))
       .pipe(postcss(plugins))
       .pipe(gulp.dest(`./${global.folder.build}`));
-  };
 };

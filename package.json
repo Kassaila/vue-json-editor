@@ -35,14 +35,17 @@
     "node": ">=10.0.0"
   },
   "scripts": {
-    "format": "npx prettier 'src/**/*' --write --ignore-unknown",
-    "pre-commit": "npx lint-staged",
+    "lint:js": "npx eslint --fix **/*.{js,vue}",
+    "format": "npx prettier . --write --ignore-unknown",
+    "pre-commit": "npx lint-staged -r",
     "dev": "npx gulp",
     "test": "npx gulp build --log-level -LLLL",
     "build": "npx gulp build"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
+    "@babel/eslint-parser": "^7.12.1",
+    "@babel/eslint-plugin": "^7.12.1",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
     "@babel/plugin-proposal-private-methods": "^7.12.1",
@@ -54,6 +57,12 @@
     "babel-loader": "^8.2.2",
     "cssnano": "^4.1.10",
     "del": "^6.0.0",
+    "eslint": "^7.17.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-vue": "^7.4.1",
     "gulp": "^4.0.2",
     "gulp-if": "^3.0.0",
     "gulp-postcss": "^9.0.0",

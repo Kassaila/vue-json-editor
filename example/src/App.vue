@@ -39,11 +39,13 @@ export default {
           },
         ],
         others: {
-          id: 1246,
-          time: new Date(),
-          description: 'last example run',
-          pattern: /abc/g,
+          'id': 1246,
+          'time': new Date(),
+          'description': 'last example run',
+          'pattern': /abc/g,
+          'empty-list': [],
         },
+        reserved: {},
       },
       dataOutput: {},
     };

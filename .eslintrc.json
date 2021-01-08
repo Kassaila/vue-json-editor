@@ -1,0 +1,37 @@
+{
+  "root": true,
+  "parser": "vue-eslint-parser",
+  "parserOptions": {
+    "parser": "@babel/eslint-parser",
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "globals": {},
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2021": true
+  },
+  "plugins": ["import", "@babel", "prettier", "vue"],
+  "extends": [
+    "airbnb-base",
+    "plugin:vue/recommended",
+    "prettier",
+    "prettier/babel",
+    "prettier/vue"
+  ],
+  "rules": {
+    "no-param-reassign": ["error", { "props": false }],
+    "no-underscore-dangle": "off",
+    "func-names": ["warn", "as-needed"],
+    "quote-props": [
+      "warn",
+      "as-needed",
+      {
+        "keywords": true,
+        "unnecessary": false
+      }
+    ],
+    "vue/html-indent": "off"
+  }
+}

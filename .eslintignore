@@ -1,0 +1,15 @@
+# vendor
+/node_modules/
+
+# project builder
+/*.js
+/tasks
+/system_files
+/helpers
+
+# example
+/example
+
+# production
+/docs
+/dist

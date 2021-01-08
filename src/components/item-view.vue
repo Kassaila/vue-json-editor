@@ -7,8 +7,8 @@
       @end="dragEnd"
     >
       <div
-        v-for="(item, index) in currentData"
-        :key="`${item.type}-${index}`"
+        v-for="(item, i) in currentData"
+        :key="`${item.type}-${i}`"
         class="object-view"
         :class="{
           'object-view_list': item.type === 'object' || item.type === 'array',
@@ -32,26 +32,26 @@
                   >^</span
                 ></slot
               >
-              <i v-if="item.type === 'object'">{{ `{ ${item.childParams.length} }` }}</i>
-              <i v-if="item.type === 'array'">{{ `[ ${item.childParams.length} ]` }}</i>
+              <i v-if="item.type === 'object'">{{ `{ ${item.value.length} }` }}</i>
+              <i v-if="item.type === 'array'">{{ `[ ${item.value.length} ]` }}</i>
             </b>
           </button>
           <input
-            v-if="item.name !== null"
-            v-model.trim="item.name"
+            v-if="item.key !== null"
+            v-model.trim="item.key"
             type="text"
-            :placeholder="placeholderKey"
+            :placeholder="item.placeholder"
             class="json-editor__input key__input"
-            @blur="checkKey(item, $event)"
+            @blur="checkItemKey(item, $event)"
           />
-          <i v-else>{{ index }}. </i>
+          <i v-else>{{ i }}. </i>
         </div>
-        <div class="object-view__value" v-show="!item.collapsed">
+        <div v-show="!item.collapsed" class="object-view__value">
           <item-view
             v-if="item.type === 'object' || item.type === 'array'"
-            :object-type="item.type"
-            :parsed-data="item.childParams"
-            v-model="item.childParams"
+            v-model="item.value"
+            :item-type="item.type"
+            :parsed-data="item.value"
           >
             <template #icon-add>
               <slot name="icon-add"> </slot>
@@ -70,20 +70,20 @@
             <span v-if="item.type === 'null'" class="json-editor__input value__input">null</span>
             <input
               v-if="item.type === 'string'"
-              v-model.trim="item.remark"
+              v-model.trim="item.value"
               type="text"
               class="json-editor__input value__input"
             />
             <input
               v-if="item.type === 'number'"
-              v-model.number="item.remark"
+              v-model.number="item.value"
               type="number"
               class="json-editor__input value__input"
               step="0.1e-100"
             />
             <select
               v-if="item.type === 'boolean'"
-              v-model="item.remark"
+              v-model="item.value"
               class="json-editor__select value__input"
             >
               <option :value="true">true</option>
@@ -92,8 +92,8 @@
           </template>
         </div>
         <div class="object-view__tools">
-          <select v-model="item.type" class="json-editor__select" @change="changeType(item, index)">
-            <option v-for="(type, index) in typesList" :value="type" :key="index">
+          <select v-model="item.type" class="json-editor__select" @change="item.changeType()">
+            <option v-for="(type, j) in typesList" :key="j" :value="type">
               {{ type }}
             </option>
           </select>
@@ -105,7 +105,7 @@
           <button
             type="button"
             class="json-editor__btn json-editor__btn_icon"
-            @click="deleteItem(parsedData, item, index)"
+            @click="deleteItem(i)"
           >
             <slot name="icon-delete">
               <span class="btn-icon btn-icon_delete" title="Delete">-</span>
@@ -117,9 +117,9 @@
 
     <item-form
       v-if="itemForm"
+      :required-key="itemType !== 'array'"
       @add-new-item="createItem"
       @cancel-new-item="toggleForm"
-      :required-key="objectType !== 'array'"
     ></item-form>
 
     <button
@@ -147,7 +147,7 @@ export default {
   },
   inject: ['typesList'],
   props: {
-    objectType: {
+    itemType: {
       type: String,
       required: true,
     },
@@ -160,7 +160,6 @@ export default {
     return {
       currentData: this.parsedData ?? [],
       itemForm: false,
-      placeholderKey: 'key',
     };
   },
   watch: {
@@ -171,30 +170,12 @@ export default {
     },
   },
   methods: {
-    deleteItem(parentDom, item, index) {
-      this.currentData.splice(index, 1);
+    deleteItem(i) {
+      this.currentData.splice(i, 1);
       this.$emit('input', this.currentData);
     },
     createItem(item) {
-      const newItem = {
-        childParams: null,
-        name: this.objectType === 'object' ? item.key : null,
-        remark: null,
-        type: item.type,
-      };
-
-      switch (newItem.type) {
-        case 'array':
-        case 'object':
-          newItem.childParams = item.value;
-          newItem.collapsed = false;
-          break;
-        default:
-          newItem.remark = item.value;
-          break;
-      }
-
-      this.currentData.push(newItem);
+      this.currentData.push(item);
       this.$emit('input', this.currentData);
       this.toggleForm();
     },
@@ -204,42 +185,8 @@ export default {
     dragEnd() {
       this.$emit('input', this.currentData);
     },
-    checkKey(item, e) {
-      if (item.name.length === 0) {
-        this.placeholderKey = 'cannot be empty';
-        e.target.focus();
-      } else if (item.name[0].match(/[a-zA-Z_]/) === null) {
-        item.name = '';
-        this.placeholderKey = 'not correct key';
-        e.target.focus();
-      }
-    },
-    changeType(item, index) {
-      switch (item.type) {
-        case 'array':
-        case 'object':
-          item.childParams = [];
-          item.remark = null;
-          break;
-        case 'string':
-          item.remark = '';
-          item.collapsed = false;
-          break;
-        case 'number':
-          item.remark = 0;
-          item.collapsed = false;
-          break;
-        case 'boolean':
-          item.remark = true;
-          item.collapsed = false;
-          break;
-        case 'null':
-          item.remark = null;
-          item.collapsed = false;
-          break;
-        default:
-          break;
-      }
+    checkItemKey(item, e) {
+      if (!item.checkKey()) e.target.focus();
     },
   },
 };
