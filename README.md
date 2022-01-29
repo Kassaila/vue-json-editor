@@ -2,6 +2,9 @@
 
 > JSON visual editor - built as a Vue.js component. Provides a basic GUI
 
+> Current package version work with **Vue.js 2**.
+> Support for **Vue.js 3** is not yet planned.
+
 Please preview - [demo example](https://kassaila.github.io/vue-json-editor/)
 
 ## Install
